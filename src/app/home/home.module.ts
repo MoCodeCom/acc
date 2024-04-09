@@ -21,7 +21,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     [NgbPaginationModule, NgbAlertModule],
     FormsModule,
     NgbDatepickerModule,
-    RouterModule
+    RouterModule,
+    
   ],
   exports:[
     HomeComponent,

@@ -12,6 +12,12 @@ import { ProcessorsModule } from './processors/processors.module';
 import { HomeModule } from './home/home.module';
 import { NgbAlertModule, NgbDatepickerModule, NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BanksModule } from './banks/banks.module';
+import { ChartsModule } from './charts/charts.module';
+
+import { SettingsModule } from './settings/settings.module';
+import { ReportsModule } from './reports/reports.module';
+import { PayoutModule } from './payout/payout.module';
 
 
 @NgModule({
@@ -25,11 +31,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     FormsModule,
     BrowserAnimationsModule,
-    ProcessorsModule,
-    HomeModule,
     NgbModule,
     [NgbPaginationModule, NgbAlertModule],
-    NgbDatepickerModule
+    NgbDatepickerModule,
+    
+    HomeModule,
+    ProcessorsModule,
+    BanksModule,
+    PayoutModule,
+    ChartsModule,
+    ReportsModule,
+    SettingsModule,
   ],
   providers: [
     provideClientHydration()

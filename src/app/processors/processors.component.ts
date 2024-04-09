@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrl: './processors.component.css'
 })
 export class ProcessorsComponent {
-
+  active = 1;
 }

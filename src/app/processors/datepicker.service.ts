@@ -1,18 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
-import { DatepickerService } from '../datepicker.service';
 
-@Component({
-  selector: 'app-aibms',
-  templateUrl: './aibms.component.html',
-  styleUrl: './aibms.component.css'
+@Injectable({
+  providedIn: 'root'
 })
-export class AibmsComponent {
+export class DatepickerService {
 
-	constructor(private datepicker:DatepickerService){}
-	calendar = inject(NgbCalendar);
+  constructor() { }
+
+  calendar = inject(NgbCalendar);
 	formatter = inject(NgbDateParserFormatter);
-	currency = 'Currency';
 
 	hoveredDate: NgbDate | null = null;
 	fromDate: NgbDate | null = this.calendar.getToday();
@@ -52,19 +49,4 @@ export class AibmsComponent {
 		const parsed = this.formatter.parse(input);
 		return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
 	}
-
-
-	onChangeCurrency(curr){
-		if(curr === 'GBP'){
-			this.currency = curr;
-		}else if(curr === 'EUR'){
-			this.currency = 'EUR';
-		}else if(curr === 'US'){
-			this.currency = 'US';
-		}else{
-			this.currency = 'Currency';
-		}
-	}
-
-
 }

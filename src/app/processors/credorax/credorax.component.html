@@ -1,0 +1,203 @@
+<!--head-->
+<div class="head">
+	<h5>Reconciliation</h5>
+</div>
+<!--body-->
+<div class="body">
+<!-- Selection Date -->
+<form class="row row-cols-sm-auto">
+	<div class="col-12">
+		<div class="dp-hidden position-absolute">
+			<div class="input-group">
+				<input
+					name="datepicker"
+					class="form-control"
+					ngbDatepicker
+					#datepicker="ngbDatepicker"
+					[autoClose]="'outside'"
+					(dateSelect)="onDateSelection($event)"
+					[displayMonths]="2"
+					[dayTemplate]="t"
+					outsideDays="hidden"
+					[startDate]="fromDate!"
+					tabindex="-1"
+				/>
+				<ng-template #t let-date let-focused="focused">
+					<span
+						class="custom-day"
+						[class.focused]="focused"
+						[class.range]="isRange(date)"
+						[class.faded]="isHovered(date) || isInside(date)"
+						(mouseenter)="hoveredDate = date"
+						(mouseleave)="hoveredDate = null"
+					>
+						{{ date.day }}
+					</span>
+				</ng-template>
+			</div>
+		</div>
+		<div class="input-group">
+			<input
+				#dpFromDate
+				class="form-control"
+				placeholder="yyyy-mm-dd"
+				name="dpFromDate"
+				[value]="formatter.format(fromDate)"
+				(input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+			/>
+			<button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
+		</div>
+	</div>
+
+	<div class="col-12">
+		<div class="input-group">
+			<input
+				#dpToDate
+				class="form-control"
+				placeholder="yyyy-mm-dd"
+				name="dpToDate"
+				[value]="formatter.format(toDate)"
+				(input)="toDate = validateInput(toDate, dpToDate.value)"
+			/>
+			<button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
+		</div>
+	</div>
+
+	<!--Currency list-->
+	<div ngbDropdown class="d-inline-block">
+		<button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
+			{{currency}}
+		</button>
+		<div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+			<button ngbDropdownItem (click)="onChangeCurrency('GBP')">GBP</button>
+			<button ngbDropdownItem (click)="onChangeCurrency('EUR')">EUR</button>
+			<button ngbDropdownItem (click)="onChangeCurrency('US')">US</button>
+		</div>
+	</div>
+	<!--submit system button-->
+	<div class="col-12">
+		<button type="button" class="btn btn-primary">System Date</button>
+	</div>
+
+	<!--Input file-->
+	<div class="col-12">
+		<div class="input-group mb-3">
+			<p>Credorax file: </p>
+			<label class="input-group-text" for="inputGroupFile01">Upload</label>
+      <!--<button>Upload</button>-->
+			<input type="file" class="form-control" id="inputGroupFile01">
+		</div>
+	</div>
+
+	<!--Reconciliation button-->
+	<div class="col-12">
+		<button type="button" class="btn btn-success">Reconcilition</button>
+	</div>
+
+</form>
+
+<hr />
+<!--
+<pre>From date model: {{ fromDate | json }}</pre>
+<pre>To date model: {{ toDate | json }}</pre>
+-->
+
+<!------------------------------->
+<div class="table">
+	<div class="system-table">
+		<p>System Data</p>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Statment Date</th>
+					<th scope="col">Status Paid</th>
+					<th scope="col">Paid Currency</th>
+
+				</tr>
+			</thead>
+			<tbody>
+				@for (country of countries; track country.ID) {
+					<tr>
+						<th scope="row">{{ country.ID }}</th>
+						<td>
+							{{ country.DATE }}
+						</td>
+						<td>{{ country.PAID | number }}</td>
+						<td>{{ country.CURRENCY }}</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+
+		<div class="d-flex justify-content-between p-2">
+			<ngb-pagination
+				[collectionSize]="collectionSize"
+				[(page)]="page"
+				[pageSize]="pageSize"
+				(pageChange)="refreshCountries()"
+			>
+			</ngb-pagination>
+
+			<select class="form-select" style="width: 150px; font-size: 12px;height: 40px;" [(ngModel)]="pageSize" (ngModelChange)="refreshCountries()">
+				<option [ngValue]="2">2 items per page</option>
+				<option [ngValue]="4">4 items per page</option>
+				<option [ngValue]="6">6 items per page</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="processor-table">
+		<p>Processors Data</p>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Statment Date</th>
+					<th scope="col">Status Paid</th>
+					<th scope="col">Paid Currency</th>
+
+				</tr>
+			</thead>
+			<tbody>
+				@for (country of countries; track country.ID) {
+					<tr>
+						<th scope="row">{{ country.ID }}</th>
+						<td>
+							{{ country.DATE }}
+						</td>
+						<td>{{ country.PAID | number }}</td>
+						<td>{{ country.CURRENCY }}</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+
+		<div class="d-flex justify-content-between p-2">
+			<ngb-pagination
+				[collectionSize]="collectionSize"
+				[(page)]="page"
+				[pageSize]="pageSize"
+				(pageChange)="refreshCountries()"
+			>
+			</ngb-pagination>
+
+			<select class="form-select" style="width: 150px; font-size: 12px; height: 40px;" [(ngModel)]="pageSize" (ngModelChange)="refreshCountries()">
+				<option [ngValue]="2">2 items per page</option>
+				<option [ngValue]="4">4 items per page</option>
+				<option [ngValue]="6">6 items per page</option>
+			</select>
+		</div>
+	</div>
+
+</div>
+<!-- End body -->
+</div>
+
+
+<!--foot-->
+<div class="foot">
+	<div class="foot-section"></div>
+	<div class="foot-section"></div>
+	<div class="foot-section"></div>
+</div>

@@ -1,0 +1,40 @@
+
+<div class="header">
+	<h4>Payout</h4>
+</div>
+<ul ngbNav #nav="ngbNav" [(activeId)]="active" [destroyOnHide]="false" class="nav-tabs">
+	<li [ngbNavItem]="1" [destroyOnHide]="true">
+		<button ngbNavLink>WWC Cash Express</button>
+		<ng-template ngbNavContent>
+			<app-wwc-cash-express></app-wwc-cash-express>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="2">
+		<button ngbNavLink>GCC</button>
+		<ng-template ngbNavContent>
+			<app-gcc></app-gcc>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="3">
+		<button ngbNavLink>UPT</button>
+		<ng-template ngbNavContent let-active>
+			<app-upt></app-upt>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="4">
+		<button ngbNavLink>Saudi Express Remit</button>
+		<ng-template ngbNavContent let-active>
+			<app-saudi></app-saudi>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="5">
+		<button ngbNavLink>Davinate</button>
+		<ng-template ngbNavContent let-active>
+			<app-davinate></app-davinate>
+		</ng-template>
+	</li>
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+<pre>Active: {{ active }}</pre>

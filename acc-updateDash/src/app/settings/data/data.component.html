@@ -1,0 +1,45 @@
+
+<div class="container">
+    <div class="dataSetting">
+        <h6>Data</h6>
+        <div class="generateData">
+            <hr>
+            <div class="generateTable">
+                <p class="title">Generate Table</p>
+                <!--***************** Credorex ***********************-->
+                <div>
+                    <div class="alert alert-warning" 
+                         role="alert" 
+                         id='alertGenerateTbl' 
+                         *ngIf="tblAlrtClass"
+                         >
+                         If you create a new table, it will overwrite any existing table with the same name, deleting its data and replacing it with the new table.
+                        <div>
+                            <button class="btn btn-warning" 
+                            #btnGenerateTbl
+                            (click)="onGenetateTableAlert()">Execute</button>
+                            <button class="btn btn-danger" id='btn' 
+                            (click)="cancelGenerateTableAlert()">Cancel</button>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+
+                <div class="data_container">
+                    <button class="btn btn-success" (click)="onGenerateTable('credorex')">Create Cerdorx Table</button>
+                    <button class="btn btn-danger" (click)="onDeleteTable('credorex')">Delete Table</button>
+                </div>
+                <hr>
+                <!--***************** CP *****************************-->
+                <div class="data_container">
+                    <button class="btn btn-success" (click)="onGenerateTable('cp')">Create CP Table</button>
+                    <button class="btn btn-danger" (click)="onDeleteTable('cp')">Delete Table</button>
+                </div>
+                
+                
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>

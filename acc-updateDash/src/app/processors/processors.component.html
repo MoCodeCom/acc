@@ -1,0 +1,52 @@
+
+<div class="header">
+	<h4>Processors</h4>
+</div>
+<ul ngbNav #nav="ngbNav" [(activeId)]="active" [destroyOnHide]="false" class="nav-tabs">
+	<li [ngbNavItem]="1" [destroyOnHide]="true">
+		<button ngbNavLink>Credorax</button>
+		<ng-template ngbNavContent>
+			<app-credorax></app-credorax>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="2">
+		<button ngbNavLink>AIBMS</button>
+		<ng-template ngbNavContent>
+			<app-aibms></app-aibms>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="3">
+		<button ngbNavLink>Paysafe Old</button>
+		<ng-template ngbNavContent>
+			<app-paysafe-old></app-paysafe-old>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="4">
+		<button ngbNavLink>Paysafe New</button>
+		<ng-template ngbNavContent>
+			<app-paysafe-new></app-paysafe-new>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="5">
+		<button ngbNavLink>Checkout Old</button>
+		<ng-template ngbNavContent>
+			<app-checkout-old></app-checkout-old>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="6">
+		<button ngbNavLink>Checkout New</button>
+		<ng-template ngbNavContent>
+			<app-checkout-new></app-checkout-new>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="7">
+		<button ngbNavLink>Truelayer</button>
+		<ng-template ngbNavContent let-active>
+			<app-checkout-new></app-checkout-new>
+		</ng-template>
+	</li>
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+<pre>Active: {{ active }}</pre>

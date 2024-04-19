@@ -17,6 +17,7 @@ import { ChartsModule } from './charts/charts.module';
 import { ReportsModule } from './reports/reports.module';
 import { PayoutModule } from './payout/payout.module';
 import { SettingsModule } from './settings/settings.module';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 @NgModule({
@@ -40,10 +41,12 @@ import { SettingsModule } from './settings/settings.module';
     PayoutModule,
     ChartsModule,
     ReportsModule,
-    SettingsModule
+    SettingsModule,
+ 
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })

@@ -64,6 +64,9 @@ export class CredoraxComponent {
 	//upload file
 	status:"initial" |"uploading"| "success" | "fail" = "initial";
 	file:File | null = null;
+	/*-------------------- Alert variables ---------------------*/
+	uploadSystemMessage:any='';
+	uploadCredorxMessage:any='';
 
 	constructor(
 		private processors:ProcessorsService,
@@ -130,11 +133,11 @@ export class CredoraxComponent {
 
 	//------------- input upload file -------------------//
 
-	onChange(data:any){
-		const file:File = data.target.files[0];
-		if(file){
+	onChangeCredorex(data:any){
+		const File:File = data.target.files[0];
+		if(File){
 			this.status = "initial";
-			this.file = file;
+			this.file = File;
 		}
 	}
 
@@ -142,11 +145,12 @@ export class CredoraxComponent {
 		if(this.file){
 			const formData = new FormData();
 			formData.append('file', this.file, this.file.name);
-			const upload$ = this.http.post("https://", formData);
+			const upload$ = this.http.post("http://localhost:9000/uploadcredorex", formData);
 			this.status = 'uploading';
 			upload$.subscribe({
-				next:()=>{
+				next:(result)=>{
 					this.status = 'success';
+					this.uploadCredorxMessage = result;
 				},
 				error:(error:any)=>{
 					this.status = 'fail';
@@ -154,10 +158,40 @@ export class CredoraxComponent {
 				}
 			})
 		}
+
+		
+		this.uploadCredorxMessage = '';
+		this.uploadSystemMessage = '';
 	}
 
-	onUploadCp(){
-		console.log(this.file);
+	onUploadCpCredorex(){
+		if(this.file){
+			const formData = new FormData();
+			formData.append('file', this.file, this.file.name);
+			const upload$ = this.http.post("http://localhost:9000/uploadcpcredorex", formData);
+			this.status = 'uploading';
+			upload$.subscribe({
+				next:(result)=>{
+					this.status = 'success';
+					this.uploadSystemMessage = result;
+				},
+				error:(error:any)=>{
+					this.status = 'fail';
+					return throwError(()=> error)
+				}
+			})
+		}
+
+		this.uploadCredorxMessage = '';
+		this.uploadSystemMessage = '';
+	}
+
+	onChangeCpCredorex(data:any){
+		const File:File = data.target.files[0];
+		if(File){
+			this.status = "initial";
+			this.file = File;
+		}
 	}
 
 	

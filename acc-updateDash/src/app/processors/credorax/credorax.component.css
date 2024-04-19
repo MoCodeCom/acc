@@ -24,12 +24,21 @@
 }
 
 .head{
-    height: 40px;
+    height: 60px;
     width: 90vw;
     background-color: rgb(231, 231, 231);
     margin: 10px 0px;
     border-radius: 10px;
-    padding:9px
+    padding:0px;
+    display: flex;
+    align-content: center;
+
+}
+
+.head h5{
+    margin-left: 10px;
+    margin-top:10px;
+    font-size: 15px;
 }
 
 .col-12{
@@ -45,9 +54,6 @@
     display: flex;
     padding:5px;
 }
-h5{
-
-}
 
 p{
     margin: 5px 5px;
@@ -62,9 +68,27 @@ p{
 }
 /*------------------------------- upload btn -------------------*/
 .uploadBtn{
-    border: 0.4 solid rgb(223, 223, 223);
-    border-radius: 10px;
+    height: 100%;
+    border: white;
 }
+
+
+
+.inputs{
+    display: flex;
+    align-content: center;
+    padding-top: 10px;
+
+}
+
+.inputs .input-group{
+    align-items: center;
+    display: flex;
+    padding: 0px;
+    margin-left: 50px;
+
+}
+
 
 /*------------------------------- table -------------------------*/
 
@@ -97,6 +121,66 @@ p{
     display: inline;
     border: 0.5 solid rgb(184, 184, 184);
 }
+
+/*----------------------- Alerts -----------------------*/
+.upload_successful{
+
+    margin-top: 3px;
+    margin-left: 100px;
+    animation: fadeOut 4s forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+.upload_danger{
+
+    margin-top: 3px;
+    margin-left: 100px;
+    animation: fadeOut 4s forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+.upload_loading{
+
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    margin-top: 3px;
+    margin-left: 100px;
+    animation: fadeOut 4s forwards;
+}
+
+.error_warning{
+    display: none;
+    margin-top: 3px;
+    margin-left: 100px;
+}
+
+.data_exist_warning{
+
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    margin-top: 3px;
+    margin-left: 100px;
+    animation: fadeOut 5s forwards;
+}
+
+.data_exist_warningSystem{
+
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    margin-top: 3px;
+    margin-left: 100px;
+    animation: fadeOut 5s forwards;
+}
+
+
+
+
+@keyframes fadeOut {
+    0% { display: inherit; }
+    100% { display: none; }
+  }
 
 
 

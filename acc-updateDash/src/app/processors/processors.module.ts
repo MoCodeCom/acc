@@ -12,6 +12,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbAlertModule, NgbDatepickerModule, NgbDropdownModule, NgbNavModule, NgbPaginationModule, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from '@angular/material/tree';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+
 
 
 
@@ -34,6 +38,7 @@ import { RouterModule } from '@angular/router';
     FormsModule,
     NgbDatepickerModule,
     RouterModule,
+    [MatTreeModule, MatButtonModule, MatIconModule]
   ],
   exports:[
     ProcessorsComponent,

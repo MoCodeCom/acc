@@ -17,8 +17,13 @@ export class ApiService {
     else if(table_name === 'cp'){
       this.http.get('http://localhost:9000/createcptbl').subscribe(result =>{
         console.log(result);
-      });
+      })
     }
+    else if(table_name === 'recon_credorex'){
+      this.http.get('http://localhost:9000/createreconcredorex').subscribe(result =>{
+        console.log(result);
+      })
+    };
   }
 
 
@@ -32,6 +37,11 @@ export class ApiService {
         console.log(result);
       });
     }
+    else if(table_name === 'recon_credorex'){
+      this.http.get('http://localhost:9000/deletereconcredorex').subscribe(result =>{
+        console.log(result);
+      })
+    };
   }
   
 }

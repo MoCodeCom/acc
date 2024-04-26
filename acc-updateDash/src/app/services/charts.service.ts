@@ -34,6 +34,43 @@ export class ChartsService{
     });
   }
 
+  barChart(context:string,labels:any=['CAD','EUR','GBP'], dataCurr:any=[0.1,0.1,0.1]){
+    var chart = new Chart('barChart',{
+      type:'bar',
+      data :{
+        labels: labels,
+        datasets: [{
+          label: 'Currencies',
+          data: dataCurr,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+    
+          ],
+          borderColor: [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(153, 102, 255)',
+          ],
+          borderWidth: 1
+        }]},
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+
+    });
+    
+    
+
+
+  
+  }
+
 
 
 }

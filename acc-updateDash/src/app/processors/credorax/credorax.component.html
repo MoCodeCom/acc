@@ -12,7 +12,6 @@
 			   id="inputGroupFile01"
 			   (change)="onChangeCpCredorex($event)"
 			   #fileUploadcp>
-			   
 		</div>
 
 		
@@ -26,48 +25,61 @@
 			   id="inputGroupFile02"
 			   (change)="onChangeCredorex($event)"
 			   #fileUploadCredorex>
-			   
-			   
 		</div>
-
-		
 	</div>
 
 	<!--Alerts-->
 	<div >
+		<!--Input message upload successful-->
 		<div *ngIf="status =='success'" class="upload_successful">
 			<div class="alert alert-success" role="alert">
 				Uploaded file success.
 			  </div>
 		</div>
 
+		<!--Input error faild upload-->
 		<div *ngIf="status =='fail'" class="upload_danger">
 			<div class="alert alert-danger" role="alert">
 				Uploaded file Failed.
 			  </div>
 		</div>
-
-		<div *ngIf="uploadCredorxMessage != ''" class="data_exist_warning">
+        <!--Input error message code null-->
+		<div *ngIf="uploadCredorxMessage != '' && uploadSystemMessage.message_code === null" class="data_exist_warning">
 			<div class="alert alert-warning" role="alert">
-				{{uploadCredorxMessage.message}}
+				{{uploadCredorxMessage.message}}{{uploadSystemMessage.message}}
 			  </div>
 		</div>
 
-		<div *ngIf="uploadSystemMessage != ''" class="data_exist_warningSystem">
+		<!--Input error message code 1-->
+		<div *ngIf=" uploadSystemMessage.message_code === 1 || uploadCredorxMessage.message_code === 1 " class="data_exist_warningSystem">
 			<div class="alert alert-warning" role="alert">
-				{{uploadSystemMessage.message}}
+				{{uploadSystemMessage.message}}{{uploadCredorxMessage.message}}
 			  </div>
 		</div>
 
-		
+		<!--Input error message code 2-->
+		<div *ngIf="uploadSystemMessage.message_code === 2 || uploadCredorxMessage.message_code === 2 " class="data_exist_warningSystem">
+			<div class="alert alert-danger" role="alert">
+				{{uploadSystemMessage.message}}{{uploadCredorxMessage.message}}
+			  </div>
+		</div>
 
+		<!--Input error GENERAL ERROR-->
 		<div *ngIf="status =='uploading'" class="upload_danger">
 			<div class="alert alert-primary" role="alert">
 				There is error.
 			  </div>
 		</div>
+
+		<!--Input error GENERAL ERROR-->
+		<div *ngIf="reconciliationMessage != null" class="upload_danger">
+			<div class="alert alert-primary" role="alert">
+				{{reconciliationMessage.message}}
+			</div>
+		</div>
 	</div>
 </div>
+
 <!--body-->
 <div class="body">
 <!-- Selection Date -->
@@ -151,7 +163,7 @@
 
 	<!--Reconciliation button-->
 	<div class="col-12">
-		<button type="button" class="btn btn-success">Reconcilition</button>
+		<button type="button" class="btn btn-success" (click)="onReconCredorex()">Reconcilition</button>
 	</div>
 
 </form>
@@ -170,84 +182,71 @@
 			<thead>
 				<tr>
 					<th scope="col">ID</th>
-					<th scope="col">Statment Date</th>
+					<th scope="col">Posting Date</th>
 					<th scope="col">Status Paid</th>
-					<th scope="col">Paid Currency</th>
+
 
 				</tr>
 			</thead>
 			<tbody>
-				@for (country of countries; track country.ID) {
-					<tr>
-						<th scope="row">{{ country.ID }}</th>
-						<td>
-							{{ country.DATE }}
-						</td>
-						<td>{{ country.PAID | number }}</td>
-						<td>{{ country.CURRENCY }}</td>
+					<tr *ngFor="let i of POSTS | paginate:{
+						itemsPerPage:tableSizeSystem,
+						currentPage:pageSystem,
+						totalItems:countSystem}; let post = index">
+						<th scope="row" *ngIf="i['ID_system']">{{ i['ID_system'] }}</th>
+						<td *ngIf="i['ID_system']">{{ i['posting_date_system'] }}</td>
+						<td *ngIf="i['ID_system']">{{ i['amount_system']}}</td>
+						<td *ngIf="i['ID_system']"><button class="btn btn-secondary" (click)="onMatch_system(i['ID_system'] )">Match</button></td>
 					</tr>
-				}
 			</tbody>
 		</table>
-
-		<div class="d-flex justify-content-between p-2">
-			<ngb-pagination
-				[collectionSize]="collectionSize"
-				[(page)]="page"
-				[pageSize]="pageSize"
-				(pageChange)="refreshCountries()"
-			>
-			</ngb-pagination>
-
-			<select class="form-select" style="width: 150px; font-size: 12px;height: 40px;" [(ngModel)]="pageSize" (ngModelChange)="refreshCountries()">
-				<option [ngValue]="2">2 items per page</option>
-				<option [ngValue]="4">4 items per page</option>
-				<option [ngValue]="6">6 items per page</option>
-			</select>
+		<!-- Pagenation system table -->
+		
+		<div>
+			<pagination-controls 
+			   previousLabel="Prev"
+			   nextLabel="Next"
+			   (pageChange)="onTableDataChangeSystem($event)"
+			></pagination-controls>
 		</div>
 	</div>
 
 	<div class="processor-table">
+		
 		<p>Processors Data</p>
 		<table class="table table-striped">
 			<thead>
 				<tr>
 					<th scope="col">ID</th>
-					<th scope="col">Statment Date</th>
+					<th scope="col">Posting date</th>
 					<th scope="col">Status Paid</th>
-					<th scope="col">Paid Currency</th>
 
 				</tr>
 			</thead>
-			<tbody>
-				@for (country of countries; track country.ID) {
-					<tr>
-						<th scope="row">{{ country.ID }}</th>
-						<td>
-							{{ country.DATE }}
-						</td>
-						<td>{{ country.PAID | number }}</td>
-						<td>{{ country.CURRENCY }}</td>
+			<tbody >
+				
+					<tr *ngFor="let i of POSTS2 | paginate:{
+						itemsPerPage:tableSizeProcessor,
+						currentPage:pageProcessor,
+						totalItems:countProcessor}; let post = index">
+						<th scope="row" *ngIf="i['ID_credorex']">{{ i['ID_credorex'] }}</th>
+						<td *ngIf="i['ID_credorex']">{{ i['posting_date_processor'] }}</td>
+						<td *ngIf="i['ID_credorex']">{{ i['amount_credorex']}}</td>
+						
+						<td *ngIf="i['ID_credorex']"><button class="btn btn-secondary" (click)="onMatch_credorex(i['ID_credorex'] )">Match</button></td>
 					</tr>
-				}
+				
 			</tbody>
 		</table>
-
-		<div class="d-flex justify-content-between p-2">
-			<ngb-pagination
-				[collectionSize]="collectionSize"
-				[(page)]="page"
-				[pageSize]="pageSize"
-				(pageChange)="refreshCountries()"
-			>
-			</ngb-pagination>
-
-			<select class="form-select" style="width: 150px; font-size: 12px; height: 40px;" [(ngModel)]="pageSize" (ngModelChange)="refreshCountries()">
-				<option [ngValue]="2">2 items per page</option>
-				<option [ngValue]="4">4 items per page</option>
-				<option [ngValue]="6">6 items per page</option>
-			</select>
+		<!-- Pagenation processor table -->
+		<div>
+			<pagination-controls 
+			   previousLabel="Prev"
+			   nextLabel="Next"
+			   (pageChange)="onTableDataChangeProcessor($event)"
+			></pagination-controls>
 		</div>
+		
 	</div>
 
 </div>
@@ -257,7 +256,10 @@
 
 <!--foot-->
 <div class="foot">
-	<div class="foot-section"></div>
+	<div class="foot-section">
+		<p>System data count : {{countSystemData}}</p>
+		<p>Processor data count : {{countProcessorData}}</p>
+	</div>
 	<div class="foot-section"></div>
 	<div class="foot-section"></div>
 </div>

@@ -15,6 +15,9 @@ import { RouterModule } from '@angular/router';
 import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from '@angular/material/tree';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import { NgxPaginationModule } from 'ngx-pagination';
+
 
 
 
@@ -38,7 +41,8 @@ import {MatButtonModule} from '@angular/material/button';
     FormsModule,
     NgbDatepickerModule,
     RouterModule,
-    [MatTreeModule, MatButtonModule, MatIconModule]
+    [MatTreeModule, MatButtonModule, MatIconModule],
+    NgxPaginationModule
   ],
   exports:[
     ProcessorsComponent,

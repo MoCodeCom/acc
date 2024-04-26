@@ -18,6 +18,7 @@ import { ReportsModule } from './reports/reports.module';
 import { PayoutModule } from './payout/payout.module';
 import { SettingsModule } from './settings/settings.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 @NgModule({
@@ -34,7 +35,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     NgbModule,
     [NgbPaginationModule, NgbAlertModule],
     NgbDatepickerModule,
-    
+    NgxPaginationModule,
     HomeModule,
     ProcessorsModule,
     BanksModule,

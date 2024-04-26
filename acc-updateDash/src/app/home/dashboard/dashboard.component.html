@@ -26,7 +26,18 @@
                   </div>
                 </div>
                 <div class="section-3">section 3</div>
-                <div class="section-4">section 4</div>
+                <div class="section-4">
+
+
+                    <p>USD = {{currencyApi.data.USD}}</p>
+                    <p>GBP = {{currencyApi.data.GBP}}</p>
+                    <p>EUR = {{currencyApi.data.EUR}}</p>
+                    <p>CAD = {{currencyApi.data.CAD}}</p>
+                    
+                    <div class="bar-chart-container">
+                        <canvas id="barChart" ></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

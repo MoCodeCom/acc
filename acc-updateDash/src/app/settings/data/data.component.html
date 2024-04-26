@@ -1,3 +1,15 @@
+<div *ngIf="alert_generate_message != null" class="alert-success">
+    <div class="alert alert-success" role="alert">
+        {{alert_generate_message}}
+    </div>
+</div>
+
+<div *ngIf="alert_delete_message != null" class="alert-danger">
+    <div class="alert alert-danger" role="alert">
+        {{alert_delete_message}}
+    </div>
+</div>
+
 
 <div class="container">
     <div class="dataSetting">
@@ -28,21 +40,43 @@
 
                 <div class="data_container">
                     <button class="btn btn-success" (click)="onGenerateTable('credorex')">Create Cerdorx Table</button>
-                    <button class="btn btn-danger" (click)="onDeleteTable('credorex')">Delete Table</button>
+                    <div>
+                        <button class="btn btn-primary" (click)="onDeleteAllData('credorex')">Delete Data</button>
+                        <button class="btn btn-danger" (click)="onDeleteTable('credorex')">Delete Table</button>
+                    </div>
+                    
                 </div>
                 <hr>
                 <!--***************** CP *****************************-->
                 <div class="data_container">
                     <button class="btn btn-success" (click)="onGenerateTable('cp')">Create CP Table</button>
-                    <button class="btn btn-danger" (click)="onDeleteTable('cp')">Delete Table</button>
+                    <div>
+                        <button class="btn btn-primary" (click)="onDeleteAllData('cp')">Delete Data</button>
+                        <button class="btn btn-danger" (click)="onDeleteTable('cp')">Delete Table</button>
+                    </div>
                 </div>
                 <hr>
                 <!--***************** Recon credorex *****************-->
                 <div class="data_container">
                     <button class="btn btn-success" (click)="onGenerateTable('recon_credorex')">Create Reconciliation Credorex Table</button>
-                    <button class="btn btn-danger" (click)="onDeleteTable('recon_credorex')">Delete Table</button>
+                    
+                    <div>
+                        <button class="btn btn-primary" (click)="onDeleteAllData('recon_credorex')">Delete Data</button>
+                        <button class="btn btn-danger" (click)="onDeleteTable('recon_credorex')">Delete Table</button>
+                    </div>
+                    
                 </div>
                 <hr>
+                <!--********************* Credorex index **********************-->
+                <div class="data_container">
+                    <button class="btn btn-success" (click)="onGenerateTable('credorex_index')">Create Credorax index Table</button>
+                    
+                    <div>
+                        <button class="btn btn-primary" (click)="onDeleteAllData('credorex_index')">Delete Data</button>
+                        <button class="btn btn-danger" (click)="onDeleteTable('credorex_index')">Delete Table</button>
+                    </div>
+                    
+                </div>
                 
                 
             </div>

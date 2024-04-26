@@ -1,44 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { ProcessorsService } from '../processors.service';
 import { HttpClient } from '@angular/common/http';
-import { throwError } from 'rxjs';
-
-interface Country {
-	id?: number;
-	ID: string;
-	DATE: string;
-	PAID: number;
-	CURRENCY: string;
-	
-}
-
-const COUNTRIES :Country[] = [
-	{
-	  ID: '1781734',
-	  DATE: '02-04-2024',
-	  PAID: 176.5,
-	  CURRENCY: 'GBP'
-	},
-	{
-		ID: '1781735',
-		DATE: '02-04-2024',
-		PAID: 300.5,
-		CURRENCY: 'GBP'
-	},
-	{
-		ID: '1781736',
-		DATE: '03-04-2024',
-		PAID: 176.5,
-		CURRENCY: 'GBP'
-	},
-	{
-		ID: '1781737',
-		DATE: '03-04-2024',
-		PAID: 150.5,
-		CURRENCY: 'GBP'
-	}
-  ];
+import { throwError} from 'rxjs';
 
 
 @Component({
@@ -46,7 +10,7 @@ const COUNTRIES :Country[] = [
   templateUrl: './credorax.component.html',
   styleUrl: './credorax.component.css'
 })
-export class CredoraxComponent {
+export class CredoraxComponent implements OnInit{
 	calendar = inject(NgbCalendar);
 	formatter = inject(NgbDateParserFormatter);
 	currency = 'Currency';
@@ -55,11 +19,7 @@ export class CredoraxComponent {
 	fromDate: NgbDate | null = this.calendar.getToday();
 	toDate: NgbDate | null = this.calendar.getNext(this.calendar.getToday(), 'd', 10);
 
-	// Table
-	page = 1;
-	pageSize = 4;
-	collectionSize = COUNTRIES.length;
-	countries: Country[];
+	
 
 	//upload file
 	status:"initial" |"uploading"| "success" | "fail" = "initial";
@@ -67,14 +27,37 @@ export class CredoraxComponent {
 	/*-------------------- Alert variables ---------------------*/
 	uploadSystemMessage:any='';
 	uploadCredorxMessage:any='';
+	reconciliationMessage:any = null;
+
+	/*----------------------- reconciliation-----------------------------*/
+	reconProcessorData:any =[];
+	reconData:any = [];
+	reconSystemTblData:any[] = [];
+	reconProcessorsTblData:any[] = [];
+
+	countSystemData = 0;
+	countProcessorData = 0;
+
+	// Table
+	//--------------------- Pagenation for System table --------------------//
+	POSTS:any[]=null;
+	pageSystem:number = 1;
+	countSystem:number=0;
+	tableSizeSystem:number=10;
+	//-------------------- Pagenation for processors table------------------//
+	POSTS2:any[]=null;
+	pageProcessor:number = 1;
+	countProcessor:number=0;
+	tableSizeProcessor:number=10;
+
 
 	constructor(
 		private processors:ProcessorsService,
 		private http:HttpClient
-	    ){
+	    ){}
+	ngOnInit(): void {
+		this.getReconData();
 		
-		this.refreshCountries();
-
 	}
 
 	onDateSelection(date: NgbDate) {
@@ -124,12 +107,18 @@ export class CredoraxComponent {
 		}
 	}
 
-	refreshCountries() {
-		this.countries = COUNTRIES.map((country, i) => ({ id: i + 1, ...country })).slice(
-			(this.page - 1) * this.pageSize,
-			(this.page - 1) * this.pageSize + this.pageSize,
-		);
+	//-------------- Table pagination -------------------//
+	
+	onTableDataChangeSystem(event:any):void{
+		this.tableSizeSystem =10;
+		this.pageSystem = event;
 	}
+
+	onTableDataChangeProcessor(event:any):void{
+		this.tableSizeProcessor =10;
+		this.pageProcessor = event;
+	}
+
 
 	//------------- input upload file -------------------//
 
@@ -151,6 +140,7 @@ export class CredoraxComponent {
 				next:(result)=>{
 					this.status = 'success';
 					this.uploadCredorxMessage = result;
+					console.log(result);
 				},
 				error:(error:any)=>{
 					this.status = 'fail';
@@ -192,6 +182,83 @@ export class CredoraxComponent {
 			this.status = "initial";
 			this.file = File;
 		}
+	}
+
+	async onReconCredorex(){
+		//await this.deleteAllData();
+		await this.getMatchAuto();
+		setTimeout(async()=>{
+			await this.http.get('http://localhost:9000/reconcredorex').subscribe(result =>{
+			this.reconciliationMessage = result;
+			this.getReconData();
+		})
+		setTimeout(() => {
+			this.reconciliationMessage = null;
+		}, 4000);
+		}, 10);
+	}
+
+	async getMatchAuto(){
+		await this.http.delete('http://localhost:9000/deleterowreconcredorexauto').subscribe(result =>{
+			console.log(result);
+		})
+	}
+
+	
+	async getReconData(){
+		this.reconSystemTblData = [];
+		this.reconProcessorsTblData = [];
+
+		this.reconData = [];
+		await this.http.get('http://localhost:9000/getreconcredorex').subscribe(result =>{
+				this.reconData = result['data'][0];
+				for(let i = 0;i<this.reconData.length; i++){
+					if(this.reconData[i]["ID_system"] != null){
+						this.reconSystemTblData.push(this.reconData[i]);
+						this.countSystemData++;
+					}else{
+						this.reconProcessorsTblData.push(this.reconData[i]);
+						this.countProcessorData++;
+					}
+				}
+			});
+			this.POSTS = this.reconSystemTblData;
+			this.POSTS2 = this.reconProcessorsTblData;
+			
+
+	}
+	
+
+	async deleteAllData():Promise<any>{
+		return await this.http.delete('http://localhost:9000/deleteallreconcredorex').subscribe(result =>{
+			//console.log(result['message']);
+		})
+	}
+
+
+	async onMatch_system(id){
+
+		await this.http.delete(`http://localhost:9000/deleterowreconcredorex/${id}`).subscribe(result =>{
+			this.reconciliationMessage = result;
+		});
+		setTimeout(() => {
+			window.location.reload();
+			this.reconciliationMessage = null;
+		}, 900);
+		
+	}
+
+	async onMatch_credorex(id){
+
+		await this.http.delete(`http://localhost:9000/deleterowreconcredorex/${id}`).subscribe(result =>{
+			this.reconciliationMessage = result;
+			
+		});
+		setTimeout(() => {
+			window.location.reload();
+			this.reconciliationMessage = null;
+		}, 900);
+		
 	}
 
 	

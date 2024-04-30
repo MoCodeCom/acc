@@ -1,0 +1,50 @@
+
+  <div class="input-group mb-3">
+    <button class="btn btn-outline-secondary" type="button" id="button-addon1" (click)="search(search_value)">Search</button>
+    <input type="text" 
+           class="form-control" 
+           placeholder="" 
+           aria-label="Example text with button addon" 
+           aria-describedby="button-addon1"
+           [(ngModel)] = 'search_value'
+           >
+  </div>
+  
+  <p>Data not exist in processor</p>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Posting date</th>
+        <th scope="col">Status Paid</th>
+
+      </tr>
+    </thead>
+    <tbody >
+
+        <tr *ngFor="let i of POSTS2 | paginate:{
+          itemsPerPage:tableSizeProcessor,
+          currentPage:pageProcessor,
+          totalItems:countProcessor}; let post = index">
+          <th scope="row" *ngIf="i['ID_processor']">{{ i['ID_processor'] }}</th>
+          <td *ngIf="i['ID_processor']">{{ i['posting_date_processor'] }}</td>
+          <td *ngIf="i['ID_processor']">{{ i['amount_processor']}}</td>
+
+          <td *ngIf="i['ID_processor']"><button class="btn btn-secondary" (click)="onMatch_credorex(i['ID_processor'] )">Match</button></td>
+        </tr>
+
+    </tbody>
+
+
+  </table>
+      <!-- Pagenation processor table -->
+
+  <div>
+    <pagination-controls
+       previousLabel="Prev"
+       nextLabel="Next"
+       (pageChange)="onTableDataChangeProcessor($event)"
+    ></pagination-controls>
+  </div>
+
+

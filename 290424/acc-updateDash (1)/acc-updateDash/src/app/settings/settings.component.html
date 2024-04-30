@@ -1,0 +1,28 @@
+
+<div class="header">
+	<h4>Settings</h4>
+</div>
+<ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+	<li [ngbNavItem]="1">
+		<button ngbNavLink>General</button>
+		<ng-template ngbNavContent>
+			
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="2">
+		<button ngbNavLink>Data</button>
+		<ng-template ngbNavContent>
+			<app-data></app-data>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="3">
+		<button ngbNavLink>Users</button>
+		<ng-template ngbNavContent>
+			
+		</ng-template>
+	</li>
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+<pre>Active: {{ active }}</pre>

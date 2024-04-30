@@ -1,0 +1,42 @@
+  <div class="input-group mb-3">
+    <button class="btn btn-outline-secondary" type="button" id="button-addon1" (click)="search(search_value)">Search</button>
+    <input type="text" 
+           class="form-control" 
+           placeholder="" 
+           aria-label="Example text with button addon" 
+           aria-describedby="button-addon1"
+           [(ngModel)]="search_value">
+  </div>
+  <div class="table_title"><p>Data not exsit in system</p><button class="btn btn-default" (click)="getReconData_2()"><img width="25px" alt="reload" src="../../../../assets/images/reload.png"></button></div>
+  
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Posting Date</th>
+        <th scope="col">Status Paid</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let i of POSTS | paginate:{
+          itemsPerPage:tableSizeSystem,
+          currentPage:pageSystem,
+          totalItems:countSystem}; let post_1 = index">
+          <th scope="row" *ngIf="i['ID_system']">{{ i['ID_system'] }}</th>
+          <td *ngIf="i['ID_system']">{{ i['posting_date_system'] }}</td>
+          <td *ngIf="i['ID_system']">{{ i['amount_system']}}</td>
+          <td *ngIf="i['ID_system']"><button class="btn btn-secondary" (click)="onMatch_system(i['ID_system'] )">Match</button></td>
+        </tr>
+    </tbody>
+
+  </table>
+      <!-- Pagenation system table -->
+
+      <div>
+        <pagination-controls
+           previousLabel="Prev"
+           nextLabel="Next"
+           (pageChange)="onTableDataChangeSystem($event)"
+        ></pagination-controls>
+      </div>
+

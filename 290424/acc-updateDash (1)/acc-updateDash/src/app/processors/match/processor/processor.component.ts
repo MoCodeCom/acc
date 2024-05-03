@@ -12,8 +12,7 @@ export class ProcessorComponent implements OnInit{
   constructor(
     private http:HttpClient,
     private serviceProcessor:ProcessorsService,
-    private serviceMatch:MatchService,
-
+    private serviceMatch:MatchService
   ){}
 
 
@@ -26,7 +25,7 @@ reconData:any[] = [];
 reconProcessorsTblData:any[] = [];
 countProcessorData = 0;
 //-------------------- Pagenation for processors table------------------//
-POSTS2:any[]=null;
+POSTS2:any[]=[];
 pageProcessor:number = 1;
 countProcessor:number=0;
 tableSizeProcessor:number=10;
@@ -35,8 +34,8 @@ search_value:string = null;
 
 //-------------- Table pagination -------------------//
 
-//-------------- Searching --------------------------//
-
+//-------------- Calender --------------------------//
+model2: string;
 
 
 onTableDataChangeProcessor(event:any):void{
@@ -67,17 +66,15 @@ async getReconData(){
 					if(this.reconData[i]["ID_processor"] != null){
 						this.reconProcessorsTblData.push(this.reconData[i]);
 						this.countProcessorData++;
-            //this._InputCountProcessor++;
 					}
 				}
 			});
-      //this._InputCountProcessor = this.countProcessorData;
       this.serviceProcessor.countProcessor(this.countProcessorData);
 			this.POSTS2 = this.reconProcessorsTblData;
 
 
 }
-
+// To search in the processor recon column data.
 async search(search_value){
   if(search_value === null || search_value === ''){
     this.getReconData();
@@ -88,7 +85,31 @@ async search(search_value){
   
 }
 
-  
+async getReconData_2(){
+  this.reconProcessorsTblData = [];
+  this.reconData = [];
+  await this.http.get('http://localhost:9000/processor/credorax/getreconcredorex').subscribe(result =>{
+      this.reconData = result['data'][0];
+      for(let i = 0;i<this.reconData.length; i++){
+        if(this.reconData[i]["ID_processor"] != null){
+          this.reconProcessorsTblData.push(this.reconData[i]);
+          //this.countSystemData++;
+        }
+      }
+    });
+    this.POSTS2 = this.reconProcessorsTblData;
+    this.serviceProcessor.countSystem(this.countProcessorData);
+}
 
+//To get data according to selected date.
+  async getDataByDate(model2){
+    const date = model2['year']+'-'+model2['month']+'-'+model2['day'];
+    const d = this.serviceMatch.formatDate(date);
+    console.log(d);
+    await this.serviceMatch.getReconDataOnDate(d,'processor')
+    .then(()=>{
+      this.POSTS2 = this.serviceMatch.subject_message.value[0];
+    });
+  }
 
 }

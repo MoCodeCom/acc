@@ -1,4 +1,31 @@
+<!-- calender / refresh section -->
+  <div class="table_title">
+    <p>System</p>
+    <!-- calender -->
+    <form class="row row-cols-sm-auto">
+			<div class="col-12">
+				<div class="input-group">
+					<input
+						class="form-control"
+						placeholder="dd/mm/yyyy"
+						name="d2"
+						#c2="ngModel"
+						[(ngModel)]="model2"
+						ngbDatepicker
+						#d2="ngbDatepicker"
+					/>
+					<button class="btn btn-outline-secondary bi bi-calendar3" (click)="d2.toggle()" type="button"></button>
+				</div>
+			</div>
+		</form>
+    <button class="btn btn-success" (click)="getDataByDate(model2)">Submit</button>
+    <!-- refresh -->
+    <button class="btn btn-default" (click)="getReconData_2()"><img width="25px" alt="reload" src="../../../../assets/images/reload.png"></button>
+    
+  </div>
+<!-- End calender / refresh section -->
 
+<!-- Search section -->
   <div class="input-group mb-3">
     <button class="btn btn-outline-secondary" type="button" id="button-addon1" (click)="search(search_value)">Search</button>
     <input type="text" 
@@ -9,15 +36,17 @@
            [(ngModel)] = 'search_value'
            >
   </div>
-  
-  <p>Data not exist in processor</p>
+
+<!-- End search section -->
+
+<!-- Table recon processor section -->
   <table class="table table-striped">
     <thead>
       <tr>
         <th scope="col">ID</th>
         <th scope="col">Posting date</th>
         <th scope="col">Status Paid</th>
-
+        <th scope="col">Currency</th>
       </tr>
     </thead>
     <tbody >
@@ -29,15 +58,15 @@
           <th scope="row" *ngIf="i['ID_processor']">{{ i['ID_processor'] }}</th>
           <td *ngIf="i['ID_processor']">{{ i['posting_date_processor'] }}</td>
           <td *ngIf="i['ID_processor']">{{ i['amount_processor']}}</td>
-
+          <td *ngIf="i['ID_processor']">{{ i['currency_processor']}}</td>
           <td *ngIf="i['ID_processor']"><button class="btn btn-secondary" (click)="onMatch_credorex(i['ID_processor'] )">Match</button></td>
         </tr>
-
     </tbody>
-
-
   </table>
-      <!-- Pagenation processor table -->
+  <!-- End table recon processor section -->
+
+
+  <!-- Pagenation processor table -->
 
   <div>
     <pagination-controls
@@ -46,5 +75,7 @@
        (pageChange)="onTableDataChangeProcessor($event)"
     ></pagination-controls>
   </div>
+
+  <!-- End Pagenation processor table -->
 
 

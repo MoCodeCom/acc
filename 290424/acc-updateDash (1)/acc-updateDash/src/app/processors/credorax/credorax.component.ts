@@ -4,7 +4,6 @@ import { ProcessorsService } from '../processors.service';
 import { HttpClient } from '@angular/common/http';
 import { throwError} from 'rxjs';
 import { CredoraxService } from '../../services/processor/credorax.service';
-import { isThisISOWeek } from 'date-fns';
 import { ApiService } from '../../services/api.service';
 
 
@@ -16,7 +15,12 @@ import { ApiService } from '../../services/api.service';
 export class CredoraxComponent implements OnInit{
 	calendar = inject(NgbCalendar);
 	formatter = inject(NgbDateParserFormatter);
-	currency = 'Currency';
+	/*----------------- statement list ------------------*/
+    register_statement_list = 'Registered Statement';
+	statement_list:any = null;
+	/*---------------------------------------------------*/
+	currency='GBP';
+	currencies = ['USD', 'GBP', 'CAD','SAR', 'EUR']
 	// Date picker
 	hoveredDate: NgbDate | null = null;
 	fromDate: NgbDate | null = this.calendar.getToday();
@@ -30,30 +34,34 @@ export class CredoraxComponent implements OnInit{
 	/*-------------------- Alert variables ---------------------*/
 	uploadSystemMessage:any='';
 	uploadCredorxMessage:any='';
-	reconciliationMessage:any = null;
+	reconciliationMessage:any = [];
 
 	/*----------------------- reconciliation-----------------------------*/
-  /*
-	reconProcessorData:any =[];
-	reconData:any = [];
-	reconSystemTblData:any[] = [];
-	reconProcessorsTblData:any[] = [];*/
 
-	public countProcessorData = this.processors.countProcessorBehaveior;
-    public countSystemData = this.processors.countSystemBehaveior;
+
+	public countProcessorData = this.processorsService.countProcessorBehaveior;
+    public countSystemData = this.processorsService.countSystemBehaveior;
 
 	// Table
 
+	/*------------------------- register -----------------------------------*/
+	sum_payment:any[] = [];
+	sum_fee:any[]=[] //'[fixed,discount,interchange,card,acquiring]'
+	sum_fee_total=null;
+	/*----------------------------------------------------------------------*/
 
 
 	constructor(
-		private processors:ProcessorsService,
+		private processorsService:ProcessorsService,
 		private http:HttpClient,
 		private serviceCredorax:CredoraxService,
 		private apiService:ApiService
   ){}
 	ngOnInit(): void {
     this.count();
+	this.onGetPayments();
+	this.onGetSumPayment();
+	this.onGetSumFees();
   }
 
 	onDateSelection(date: NgbDate) {
@@ -199,8 +207,8 @@ export class CredoraxComponent implements OnInit{
 
   async count(){
 
-      this.countProcessorData = await this.processors.countProcessorBehaveior;
-      this.countSystemData = await this.processors.countSystemBehaveior;
+      this.countProcessorData = await this.processorsService.countProcessorBehaveior;
+      this.countSystemData = await this.processorsService.countSystemBehaveior;
   }
 
 
@@ -214,9 +222,47 @@ export class CredoraxComponent implements OnInit{
 	window.location.reload();
   }
 
+  async onGetPayments(){
+	await this.serviceCredorax.get_Payments('credorax')
+	.then(() =>{
+		this.statement_list = this.serviceCredorax.Subject_statement_list;
+	}).catch(error =>{console.log(error);});
+  }
 
+  async onGetSumPayment(){
+	this.sum_payment = [];
+	for(let i = 0;i<this.currencies.length;i++){
+		const c = this.currencies[i];
+		await this.serviceCredorax.get_sum_payment('credorax',this.currencies[i])
+		.then((result)=>{
+			const isCurrencyExistthis = this.serviceCredorax.Subject_sum_payment.value;
+			if(isCurrencyExistthis['res']['total_sum'] !== null){
+				this.sum_payment.push(isCurrencyExistthis)
+			}
+		})
+		.catch(error =>{
+			console.log(error);
+		});
+	}
+  }
 
+  async onGetSumFees(){
+	const feesType = ['fixed_transaction_fee','discount_rate','interchange','card_scheme_fees','acquiring_fee'];
+	this.sum_fee = [];
+	this.sum_fee_total = 0;
 
+	for(let i =0;i<feesType.length;i++){
+		await this.serviceCredorax.get_sum_fee('credorex','EUR',feesType[i])
+		.then(()=>{
+			this.sum_fee.push(this.serviceCredorax.Subject_sum_fee.value);
+		})
+		.catch(error => console.log(error));
+	}
+
+	console.log(this.sum_fee);
+	this.sum_fee_total = this.sum_fee.reduce((accum,current) =>accum + parseFloat(current['res']['total_sum']), 0);
+	console.log(this.sum_fee_total);
+  }
 
 
 

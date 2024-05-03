@@ -84,7 +84,8 @@
 <div class="body">
 <!-- Selection Date -->
 <form class="row row-cols-sm-auto">
-	<div class="col-12">
+	<!--
+<div class="col-12">
 		<div class="dp-hidden position-absolute">
 			<div class="input-group">
 				<input
@@ -141,7 +142,6 @@
 		</div>
 	</div>
 
-	<!--Currency list-->
 	<div ngbDropdown class="d-inline-block">
 		<button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
 			{{currency}}
@@ -152,10 +152,8 @@
 			<button ngbDropdownItem (click)="onChangeCurrency('US')">US</button>
 		</div>
 	</div>
-
-
-
-
+	-->
+	
 
 
 	<!--Reconciliation button-->
@@ -180,25 +178,65 @@
 
 
 <div class="table">
-  <div class="system-table">
-    <app-system></app-system>
-  </div>
-  
-  <div class="processor-table">
-	
-    <app-processor></app-processor>
-  </div>
+	<app-processor></app-processor>
+	<app-system></app-system>
 </div>
 <!-- End body -->
-</div>
+
 
 
 <!--foot-->
+
 <div class="foot">
+	<!-- Section 1-->
 	<div class="foot-section">
 		<p>System data count : {{countSystemData.value}}</p>
 		<p>Processor data count : {{countProcessorData.value}}</p>
 	</div>
-	<div class="foot-section"></div>
-	<div class="foot-section"></div>
+
+	<!-- Section 2 -->
+	<div class="foot-section">
+		<div>
+			<p class="list-group-item active">Statements List</p>
+			<div class="list_statement_title"><p>Statement Date</p> <p>Payment</p> </div>
+			<div class="list_statement">
+				
+				<ul class="list-group" *ngFor="let i of statement_list">
+						<li class="list-group-item" aria-disabled="true">
+							<div class="list_statement_item">
+								<p>{{i['statement_date']}}</p>
+								<p>{{i['net_activity']}}</p>
+								<p>{{i['cs_settlement_currency']}}</p>
+								<button type="button" class="btn btn-light">Show</button>
+							</div>
+							
+						</li>
+				</ul>
+			</div>
+			
+		</div>
+	</div>
+
+	<!-- Section 3 -->
+	<div class="foot-section">
+		<div class="summary">
+			<div class="payments">
+				<div>Total Payment:</div>
+				<ul *ngFor="let i of sum_payment">
+					<li>{{i['res']['total_sum'] | number}} = {{i['curr']}}</li>
+				</ul>
+			</div>
+	
+			<div class="fees">
+				<div>Total Fees</div>
+				<ul *ngFor="let i of sum_fee" >
+					<li>
+						<p style="color: rgb(197, 5, 5);">{{i['fee']}}:  {{i['res']['total_sum']|number}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{i['curr']}}</p>
+					</li>
+				</ul>
+				<hr>
+				<p>Total:&nbsp;&nbsp; {{sum_fee_total | number}}</p>
+			</div>
+		</div>
+	</div>
 </div>

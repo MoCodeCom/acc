@@ -1,3 +1,30 @@
+<!-- calender / refresh section-->
+  <div class="table_title">
+    <p>Processor</p>
+    <!-- calender -->
+    <form class="row row-cols-sm-auto">
+			<div class="col-12">
+				<div class="input-group">
+					<input
+						class="form-control"
+						placeholder="dd/mm/yyyy"
+						name="d2"
+						#c2="ngModel"
+						[(ngModel)]="model2"
+						ngbDatepicker
+						#d2="ngbDatepicker"
+					/>
+					<button class="btn btn-outline-secondary bi bi-calendar3" (click)="d2.toggle()" type="button"></button>
+				</div>
+			</div>
+		</form>
+    <button class="btn btn-success" (click)="getDataByDate(model2)">Submit</button>
+    <!-- Refresh -->
+    <button class="btn btn-default" (click)="getReconData_2()"><img width="25px" alt="reload" src="../../../../assets/images/reload.png"></button>
+  </div>
+<!-- End calender / refresh section-->
+
+<!-- Search section -->
   <div class="input-group mb-3">
     <button class="btn btn-outline-secondary" type="button" id="button-addon1" (click)="search(search_value)">Search</button>
     <input type="text" 
@@ -7,7 +34,10 @@
            aria-describedby="button-addon1"
            [(ngModel)]="search_value">
   </div>
-  <div class="table_title"><p>Data not exsit in system</p><button class="btn btn-default" (click)="getReconData_2()"><img width="25px" alt="reload" src="../../../../assets/images/reload.png"></button></div>
+
+<!-- End search section -->
+
+<!-- Table recon system data section-->
   
   <table class="table table-striped">
     <thead>
@@ -15,6 +45,7 @@
         <th scope="col">ID</th>
         <th scope="col">Posting Date</th>
         <th scope="col">Status Paid</th>
+        <th scope="col">Currency</th>
       </tr>
     </thead>
     <tbody>
@@ -25,12 +56,17 @@
           <th scope="row" *ngIf="i['ID_system']">{{ i['ID_system'] }}</th>
           <td *ngIf="i['ID_system']">{{ i['posting_date_system'] }}</td>
           <td *ngIf="i['ID_system']">{{ i['amount_system']}}</td>
+          <td *ngIf="i['ID_system']">{{i['currency_system']}}</td>
           <td *ngIf="i['ID_system']"><button class="btn btn-secondary" (click)="onMatch_system(i['ID_system'] )">Match</button></td>
         </tr>
     </tbody>
 
   </table>
-      <!-- Pagenation system table -->
+
+  <!-- End table recon system data section-->
+
+
+  <!-- Pagenation system table section-->
 
       <div>
         <pagination-controls
@@ -40,3 +76,20 @@
         ></pagination-controls>
       </div>
 
+  <!-- End pagenation system table section-->
+
+  <!-- Upload data to databse -->
+  <div *ngIf="countSystemData < 2">
+    <button class="btn btn-success" 
+    style="width: 100%;" 
+    (click)="onRegister()"
+    >Register</button>
+  </div>
+  <div class="message_register" *ngIf="messge_register != null">
+    <div class="alert alert-primary" role="alert">
+      {{messge_register}}
+    </div>
+  </div>
+  
+  
+  <!-- End upload data to database -->

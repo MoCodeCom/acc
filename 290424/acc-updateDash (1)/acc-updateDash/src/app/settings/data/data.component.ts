@@ -33,7 +33,7 @@ export class DataComponent {
 
         setTimeout(() => {
           this.alert_generate_message = null;
-        }, 4000);
+        }, 3000);
       });
       this.table_name = '';
   }
@@ -51,7 +51,7 @@ export class DataComponent {
 
       setTimeout(() => {
         this.alert_delete_message = null;
-      }, 4000);
+      }, 3000);
     });
   }
 
@@ -62,7 +62,7 @@ export class DataComponent {
 
       setTimeout(() => {
         this.alert_delete_message = null;
-      }, 4000);
+      }, 3000);
     })
   }
 }

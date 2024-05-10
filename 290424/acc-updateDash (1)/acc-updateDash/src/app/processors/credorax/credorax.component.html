@@ -1,3 +1,12 @@
+
+<div class="popup" 
+     
+     *ngIf="showstatement">
+	<app-popup-processor 
+	   (close)="onCloseShow()"
+	   [showstatementlist]="showstatementlist_parent"
+	></app-popup-processor>
+</div>
 <!--head-->
 <div class="head">
 	<h5>Reconciliation</h5>
@@ -84,77 +93,6 @@
 <div class="body">
 <!-- Selection Date -->
 <form class="row row-cols-sm-auto">
-	<!--
-<div class="col-12">
-		<div class="dp-hidden position-absolute">
-			<div class="input-group">
-				<input
-					name="datepicker"
-					class="form-control"
-					ngbDatepicker
-					#datepicker="ngbDatepicker"
-					[autoClose]="'outside'"
-					(dateSelect)="onDateSelection($event)"
-					[displayMonths]="2"
-					[dayTemplate]="t"
-					outsideDays="hidden"
-					[startDate]="fromDate!"
-					tabindex="-1"
-				/>
-				<ng-template #t let-date let-focused="focused">
-					<span
-						class="custom-day"
-						[class.focused]="focused"
-						[class.range]="isRange(date)"
-						[class.faded]="isHovered(date) || isInside(date)"
-						(mouseenter)="hoveredDate = date"
-						(mouseleave)="hoveredDate = null"
-					>
-						{{ date.day }}
-					</span>
-				</ng-template>
-			</div>
-		</div>
-		<div class="input-group">
-			<input
-				#dpFromDate
-				class="form-control"
-				placeholder="yyyy-mm-dd"
-				name="dpFromDate"
-				[value]="formatter.format(fromDate)"
-				(input)="fromDate = validateInput(fromDate, dpFromDate.value)"
-			/>
-			<button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
-		</div>
-	</div>
-
-	<div class="col-12">
-		<div class="input-group">
-			<input
-				#dpToDate
-				class="form-control"
-				placeholder="yyyy-mm-dd"
-				name="dpToDate"
-				[value]="formatter.format(toDate)"
-				(input)="toDate = validateInput(toDate, dpToDate.value)"
-			/>
-			<button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
-		</div>
-	</div>
-
-	<div ngbDropdown class="d-inline-block">
-		<button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
-			{{currency}}
-		</button>
-		<div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-			<button ngbDropdownItem (click)="onChangeCurrency('GBP')">GBP</button>
-			<button ngbDropdownItem (click)="onChangeCurrency('EUR')">EUR</button>
-			<button ngbDropdownItem (click)="onChangeCurrency('US')">US</button>
-		</div>
-	</div>
-	-->
-	
-
 
 	<!--Reconciliation button-->
 	<div class="col-12">
@@ -169,10 +107,7 @@
 </form>
 
 <hr />
-<!--
-<pre>From date model: {{ fromDate | json }}</pre>
-<pre>To date model: {{ toDate | json }}</pre>
--->
+
 
 <!------------------------------->
 
@@ -190,26 +125,36 @@
 <div class="foot">
 	<!-- Section 1-->
 	<div class="foot-section">
-		<p>System data count : {{countSystemData.value}}</p>
-		<p>Processor data count : {{countProcessorData.value}}</p>
+		<div class="payments">
+			<p>Transaction count in processor : {{countSystemData.value - 1}}</p>
+			<p>Transaction count in system : {{countProcessorData.value}}</p>
+		</div>
+		
+
+		<div class="payments" >
+			<p>Total debit accounts:</p>
+			<ul *ngFor="let i of sum_recon">
+				<li>{{i['curr']}}:&nbsp;&nbsp; {{i['res'][0]['total_sum'] | number}} </li>
+			</ul>
+		</div>
 	</div>
 
 	<!-- Section 2 -->
 	<div class="foot-section">
 		<div>
-			<p class="list-group-item active">Statements List</p>
+			<p class="list-group-item active" style="font-weight: bold; color: green;">Statements List</p>
 			<div class="list_statement_title"><p>Statement Date</p> <p>Payment</p> </div>
 			<div class="list_statement">
-				
 				<ul class="list-group" *ngFor="let i of statement_list">
 						<li class="list-group-item" aria-disabled="true">
 							<div class="list_statement_item">
 								<p>{{i['statement_date']}}</p>
 								<p>{{i['net_activity']}}</p>
 								<p>{{i['cs_settlement_currency']}}</p>
-								<button type="button" class="btn btn-light">Show</button>
+								<button type="button" 
+								        class="btn btn-light"
+										(click)="onShowStatement(i['statement_date'], i['cs_settlement_currency'])">Show</button>
 							</div>
-							
 						</li>
 				</ul>
 			</div>
@@ -220,22 +165,43 @@
 	<!-- Section 3 -->
 	<div class="foot-section">
 		<div class="summary">
-			<div class="payments">
-				<div>Total Payment:</div>
-				<ul *ngFor="let i of sum_payment">
-					<li>{{i['res']['total_sum'] | number}} = {{i['curr']}}</li>
-				</ul>
+			<div >
+				<div class="payments" *ngIf="sum_payment.length > 0">
+					<p>Total Payment:</p>
+					<ul *ngFor="let i of sum_payment">
+						<li>{{i['curr']}} = {{i['res'] | number}}</li>
+					</ul>
+			    </div>
+
+				<div class="payments" *ngIf="sum_refund.length > 0 || sum_refund !== undefined">
+					<p>Total Refund:</p>
+					<ul  *ngFor="let i of sum_refund">
+						<li>{{i['curr']}} = {{i['res'][0]['total_sum'] | number}}</li>
+					</ul>
+				</div>
+
 			</div>
 	
 			<div class="fees">
-				<div>Total Fees</div>
-				<ul *ngFor="let i of sum_fee" >
-					<li>
-						<p style="color: rgb(197, 5, 5);">{{i['fee']}}:  {{i['res']['total_sum']|number}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{i['curr']}}</p>
-					</li>
-				</ul>
+				<div *ngIf="sum_fee.length > 0 || sum_fee_total !== undefined">
+					<p style="font-weight: bold; color: green;">Total Fees</p>
+					<ul *ngFor="let i of sum_fee" >
+						<li>
+							<p style="color: rgb(197, 5, 5);">{{i['fee'] }}:  {{i['res']['total_sum']|number}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{i['curr']}}</p>
+						</li>
+					</ul>
+				</div>
+				
 				<hr>
-				<p>Total:&nbsp;&nbsp; {{sum_fee_total | number}}</p>
+
+				<div *ngIf="sum_fee_total.length > 0 || sum_fee_total !== undefined">
+					<ul *ngFor="let i of sum_fee_total">
+						<li>
+							<p style="color: rgb(197, 5, 5);">Total:&nbsp;&nbsp; {{i['amount']|number }}:&nbsp;&nbsp;  {{i['currency']}}</p>
+						</li>
+					</ul>
+				</div>
+
 			</div>
 		</div>
 	</div>

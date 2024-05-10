@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbAlertConfig, NgbCalendar, NgbDate, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { CredoraxService } from '../services/processor/credorax.service';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { NgbAlertConfig, NgbCalendar, NgbDate, NgbDatepickerModule } from '@ng-b
 })
 export class HomeComponent implements OnInit{
   msg:any;
-  constructor(ngbAlertConfig: NgbAlertConfig){
+  constructor(ngbAlertConfig: NgbAlertConfig, private credorexService:CredoraxService){
 
   }
   ngOnInit(): void {
@@ -20,6 +21,10 @@ export class HomeComponent implements OnInit{
 
   processors(){
     window.location.reload();
+  }
+
+  onAccess(){
+    this.credorexService.refresh();
   }
 
 

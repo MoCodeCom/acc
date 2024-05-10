@@ -41,12 +41,17 @@
     font-size: 15px;
 }
 
+.popup{
+    
+    /*margin-top: 64px;*/
+}
+
 .col-12{
     margin-top: 7px;
 }
 
 .foot{
-    height:350px;
+    height:fit-content;
     width: 90vw;
     background-color: rgb(231, 231, 231);
     margin:10px 0px;
@@ -60,7 +65,7 @@ p{
 }
 
 .foot-section{
-    height: 340px;
+    height: fit-content;
     width: 35%;
     border: 1px solid rgb(179, 179, 179);
     z-index: 5;
@@ -177,7 +182,7 @@ p{
 /*----------------------List statement--------------------*/
 .list_statement{
     border-radius: 10px;
-    height: 270px;
+    height: 360px;
     overflow-x: auto;
 }
 
@@ -218,7 +223,9 @@ p{
 
 .payments p{
     color: rgb(8, 105, 8);
+    font-weight: bold;
 }
+
 
 
 

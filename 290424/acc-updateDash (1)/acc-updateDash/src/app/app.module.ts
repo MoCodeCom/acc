@@ -19,6 +19,9 @@ import { PayoutModule } from './payout/payout.module';
 import { SettingsModule } from './settings/settings.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { NgxPaginationModule } from 'ngx-pagination';
+//import { ProcessorStatementPipe } from './pipes/statement/processor-statement.pipe';
+
+
 //import { SearchFilterPipe } from './pipes/processor/match.pipe';
 
 
@@ -26,6 +29,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
   declarations: [
     AppComponent,
     LoginComponent,
+    //ProcessorStatementPipe,
+  
     //SearchFilterPipe,
   ],
   imports: [

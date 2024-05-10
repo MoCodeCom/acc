@@ -1,0 +1,36 @@
+
+    <div class="background">
+        
+    </div>
+
+    <div class="popup">
+        <div class="title">
+            <p>Statement</p>
+            
+        </div>
+        
+        <div class="body">
+            <div class="table_statement" *ngIf="data !== undefined">
+                <table style="gap: 5px;">
+                    <tr>
+                        <th>Id</th>
+                        <th>Statement_date</th>
+                        <th>Transaction_currency</th>
+                        <th>Transaction_amount</th>
+                        <th>Transaction_type</th>
+                    </tr>
+                    <tr *ngFor="let i of data['res']">
+                        <td>{{i['merchant_reference_number_h9']}}</td>
+                        <td>{{i['statement_date']}}</td>
+                        <td>{{i['cs_settlement_currency']}}</td>
+                        <td>{{i['net_activity']}}</td>
+                        <td>{{i['transaction_type']}}</td>
+                    </tr>
+                </table>
+            </div>
+            <button class="btn btn-danger" (click)="OnClose()">Close</button>
+        </div>
+    </div>
+
+
+

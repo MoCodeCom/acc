@@ -1,10 +1,11 @@
-import { Component, OnInit, inject, Input } from '@angular/core';
+import { Component, OnInit, inject, Input, input, Output } from '@angular/core';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { ProcessorsService } from '../processors.service';
 import { HttpClient } from '@angular/common/http';
 import { throwError} from 'rxjs';
 import { CredoraxService } from '../../services/processor/credorax.service';
 import { ApiService } from '../../services/api.service';
+import { ShareService } from '../../services/processor/share.service';
 
 
 @Component({
@@ -18,6 +19,9 @@ export class CredoraxComponent implements OnInit{
 	/*----------------- statement list ------------------*/
     register_statement_list = 'Registered Statement';
 	statement_list:any = null;
+	showstatement:boolean = false;
+	
+	showstatementlist_parent:object= {processor:'',date:'', curr:''};
 	/*---------------------------------------------------*/
 	currency='GBP';
 	currencies = ['USD', 'GBP', 'CAD','SAR', 'EUR']
@@ -34,7 +38,7 @@ export class CredoraxComponent implements OnInit{
 	/*-------------------- Alert variables ---------------------*/
 	uploadSystemMessage:any='';
 	uploadCredorxMessage:any='';
-	reconciliationMessage:any = [];
+	reconciliationMessage:any;
 
 	/*----------------------- reconciliation-----------------------------*/
 
@@ -47,7 +51,12 @@ export class CredoraxComponent implements OnInit{
 	/*------------------------- register -----------------------------------*/
 	sum_payment:any[] = [];
 	sum_fee:any[]=[] //'[fixed,discount,interchange,card,acquiring]'
-	sum_fee_total=null;
+	sum_fee_total:any[]=[];
+	sum_refund:any[]=[];
+	sum_recon:any[]=[];
+	
+	refresh:boolean = false;
+	
 	/*----------------------------------------------------------------------*/
 
 
@@ -55,13 +64,17 @@ export class CredoraxComponent implements OnInit{
 		private processorsService:ProcessorsService,
 		private http:HttpClient,
 		private serviceCredorax:CredoraxService,
-		private apiService:ApiService
+		private apiService:ApiService,
+		private shareService:ShareService,
   ){}
 	ngOnInit(): void {
     this.count();
 	this.onGetPayments();
 	this.onGetSumPayment();
 	this.onGetSumFees();
+	this.onRefresh();
+	this.onGetRefund();
+	this.onGetSumRecon();
   }
 
 	onDateSelection(date: NgbDate) {
@@ -110,9 +123,6 @@ export class CredoraxComponent implements OnInit{
 			this.currency = 'Currency';
 		}
 	}
-
-
-
 
 	//------------- input upload file -------------------//
 
@@ -198,13 +208,6 @@ export class CredoraxComponent implements OnInit{
 		})
 	}
 
-  /*
-	async deleteAllData():Promise<any>{
-		return await this.http.delete('http://localhost:9000/deleteallreconcredorex').subscribe(result =>{
-			console.log(result['message']);
-		})
-	}*/
-
   async count(){
 
       this.countProcessorData = await this.processorsService.countProcessorBehaveior;
@@ -225,19 +228,105 @@ export class CredoraxComponent implements OnInit{
   async onGetPayments(){
 	await this.serviceCredorax.get_Payments('credorax')
 	.then(() =>{
-		this.statement_list = this.serviceCredorax.Subject_statement_list;
+		setTimeout(() => {
+			this.statement_list = this.serviceCredorax.Subject_statement_list.value;
+		}, 2000);
+		
+		
 	}).catch(error =>{console.log(error);});
   }
 
   async onGetSumPayment(){
-	this.sum_payment = [];
-	for(let i = 0;i<this.currencies.length;i++){
-		const c = this.currencies[i];
-		await this.serviceCredorax.get_sum_payment('credorax',this.currencies[i])
+	
+	//for(let i = 0;i<this.currencies.length;i++){
+		await this.serviceCredorax.get_sum_payment('credorax',this.currencies)
 		.then((result)=>{
-			const isCurrencyExistthis = this.serviceCredorax.Subject_sum_payment.value;
-			if(isCurrencyExistthis['res']['total_sum'] !== null){
-				this.sum_payment.push(isCurrencyExistthis)
+			//const dataArr;
+			setTimeout(() => {
+				this.sum_payment = [];
+				const data = this.serviceCredorax.Subject_sum_payment.value
+				for(let i =0;i<data.length;i++){
+					if(data[i]['res'][0]['total_sum'] !== null){
+						this.sum_payment.push({res:data[i]['res'][0]['total_sum'], curr:data[i]['curr']});
+					}
+				}
+			}, 2000);
+
+			
+			/*
+			setTimeout(() => {
+				dataArr = this.serviceCredorax.Subject_sum_payment.value;
+			}, 2000);*/
+			
+			/*
+			setTimeout(() => {
+				const isCurrencyExistthis = this.serviceCredorax.Subject_sum_payment.value;
+				console.log(isCurrencyExistthis);
+				//console.log(isCurrencyExistthis['curr']);
+				this.sum_payment.push(isCurrencyExistthis);
+					//console.log(this.sum_payment)
+			}, 2000);*/
+		})
+		.catch(error =>{
+			console.log(error);
+		});
+	//}
+  }
+
+  async onGetSumFees(){
+	const feesType = ['fixed_transaction_fee','discount_rate','interchange','card_scheme_fees','acquiring_fee'];
+	this.sum_fee = [];
+	this.sum_fee_total = [];
+
+	for(let i =0;i<feesType.length;i++){
+		for(let n=0;n<this.currencies.length;n++){
+			await this.serviceCredorax.get_sum_fee('credorex',this.currencies[n],feesType[i])
+			.then(()=>{
+				const isCurrencyExistthis = this.serviceCredorax.Subject_sum_fee.value;
+				if(isCurrencyExistthis['res']['total_sum'] !== null && isCurrencyExistthis['res']['total_sum'] !== 0 ){
+					this.sum_fee.push(this.serviceCredorax.Subject_sum_fee.value);
+				}
+				
+			})
+			.catch(error => console.log(error));
+		}
+		
+	}
+
+	this.sum_fee_total = this.onGetFeesTotal(this.sum_fee);
+
+
+  }
+
+
+  onGetFeesTotal(arr:any[]){
+	const totalFees:any[] = [];
+	
+	arr.forEach(element =>{
+		const currency = element['curr'];
+		const amount = typeof element['res']['total_sum'] === 'string'? parseFloat(element['res']['total_sum']):element['res']['total_sum'] ;
+
+		if(!totalFees.some(item => item.currency === element['curr'])){
+			totalFees.push({currency, amount});
+
+		}else{
+			const fee = totalFees.filter(item => item.currency === currency);
+			fee[0]['amount'] += amount;
+		}
+
+	});
+	return totalFees;
+  }
+
+  async onGetRefund(){
+	this.sum_refund = [];
+	for(let i = 0;i<this.currencies.length;i++){
+		//const c = this.currencies[i];
+		await this.serviceCredorax.get_sum_refund('credorex',this.currencies[i])
+		.then((result)=>{
+			const isExist= this.serviceCredorax.Subject_refund.value;
+			if(isExist['res'][0]['total_sum'] !== null){
+				this.sum_refund.push(isExist)
 			}
 		})
 		.catch(error =>{
@@ -246,24 +335,43 @@ export class CredoraxComponent implements OnInit{
 	}
   }
 
-  async onGetSumFees(){
-	const feesType = ['fixed_transaction_fee','discount_rate','interchange','card_scheme_fees','acquiring_fee'];
-	this.sum_fee = [];
-	this.sum_fee_total = 0;
 
-	for(let i =0;i<feesType.length;i++){
-		await this.serviceCredorax.get_sum_fee('credorex','EUR',feesType[i])
-		.then(()=>{
-			this.sum_fee.push(this.serviceCredorax.Subject_sum_fee.value);
-		})
-		.catch(error => console.log(error));
+  onRefresh(){
+	this.refresh = this.serviceCredorax.Subject_refresh.value;
+	if(this.refresh === true){
+		window.location.reload();
 	}
-
-	console.log(this.sum_fee);
-	this.sum_fee_total = this.sum_fee.reduce((accum,current) =>accum + parseFloat(current['res']['total_sum']), 0);
-	console.log(this.sum_fee_total);
+	this.refresh = false;
+	
   }
 
+  async onGetSumRecon(){
+	this.sum_recon = [];
+	for(let i = 0;i<this.currencies.length;i++){
+		
+		await this.serviceCredorax.get_sum_recon('recon_credorex',this.currencies[i])
+		.then(result =>{
+			const isExist = this.serviceCredorax.Subject_sum_recon.value;
+			
+			if(isExist['res'][0]['total_sum'] !== null){
+				this.sum_recon.push(isExist)
+			}
+		})
+		.catch(error =>{
+			console.log(error);
+		})
+	}
+  }
+
+  async onShowStatement(date, curr){
+	this.showstatementlist_parent = {processor:'credorex',date:date, curr:curr};
+	this.showstatement = true;
+	
+  }
+
+  onCloseShow(){
+	this.showstatement = false;
+  }
 
 
 }

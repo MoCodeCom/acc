@@ -19,11 +19,9 @@ import {MatButtonModule} from '@angular/material/button';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SystemComponent } from './match/system/system.component';
 import { ProcessorComponent } from './match/processor/processor.component';
-
 import { SearchFilterPipe } from '../pipes/processor/match.pipe';
-
-
-
+import { PopupProcessorComponent } from '../popup/popup-processor/popup-processor.component';
+import { ProcessorStatementPipe } from '../pipes/statement/processor-statement.pipe';
 
 @NgModule({
   declarations: [
@@ -37,13 +35,16 @@ import { SearchFilterPipe } from '../pipes/processor/match.pipe';
     TruelayerComponent,
     SystemComponent,
     ProcessorComponent,
-    SearchFilterPipe
+    SearchFilterPipe,
+    PopupProcessorComponent,
+    ProcessorStatementPipe
+
 
   ],
   imports: [
     CommonModule,
     BrowserAnimationsModule,
-    [NgbPaginationModule, NgbAlertModule,NgbNavModule,NgbDropdownModule,DecimalPipe, FormsModule, NgbTypeaheadModule, NgbPaginationModule],
+    [NgbPaginationModule, NgbAlertModule,NgbNavModule,NgbDropdownModule,DecimalPipe, FormsModule, NgbTypeaheadModule, NgbPaginationModule,],
     FormsModule,
     NgbDatepickerModule,
     RouterModule,
@@ -61,7 +62,8 @@ import { SearchFilterPipe } from '../pipes/processor/match.pipe';
     CheckoutOldComponent,
     TruelayerComponent,
     ProcessorComponent,
-    SystemComponent
+    SystemComponent,
+    PopupProcessorComponent
   ]
 })
 export class ProcessorsModule { }

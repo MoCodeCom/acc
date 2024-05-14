@@ -1,0 +1,10 @@
+{
+  "routes": [
+    "/",
+    "/banks",
+    "/login",
+    "/payout",
+    "/processors",
+    "/settings"
+  ]
+}

@@ -11,9 +11,9 @@ export class CredoraxService implements OnInit{
   Subject_message = new BehaviorSubject<any>({});
   Subject_statement_list = new BehaviorSubject<any>({});
   Subject_sum_payment = new BehaviorSubject<any[]>([]);
-  Subject_sum_fee = new BehaviorSubject<any>({});
+  Subject_sum_fee = new BehaviorSubject<any[]>([]);
   Subject_refresh = new BehaviorSubject<boolean>(false);
-  Subject_refund = new BehaviorSubject<any>({});
+  Subject_refund = new BehaviorSubject<any[]>([]);
   Subject_sum_recon = new BehaviorSubject<any>({});
   Subject_index_statement = new BehaviorSubject<any>({response:'no_data'})
 
@@ -48,17 +48,39 @@ export class CredoraxService implements OnInit{
   }
 
   // sum fees 
-  async get_sum_fee(processor,curr,column){
-    await this.http.get(`http://localhost:9000/processor/credorax/getsumfees?processor=${processor}&curr=${curr}&fee=${column}`).subscribe(result =>{
-      this.Subject_sum_fee.next({res:result['result'][0][0],curr:result['currency'], fee:result['fee']});
-    });
+  async get_sum_fee(processor,curr:any[],column:any[]){
+    const dataArr:{res:string, curr:string, fee:string}[]=[]
+    for(let n=0; n<column.length;n++){
+      for(let i=0;i<curr.length;i++){
+        await this.http.get(`http://localhost:9000/processor/credorax/getsumfees?processor=${processor}&curr=${curr[i]}&fee=${column[n]}`).subscribe(result =>{
+          
+          if(result['result'][0][0]['total_sum'] !== null && result['result'][0][0]['total_sum'] !== 0){
+            dataArr.push({res:result['result'][0][0], curr:result['currency'],fee:result['fee']});
+          
+          }
+          this.Subject_sum_fee.next(dataArr);
+        });
+      }
+    }
+
+    
   }
 
   // sum refund
-  async get_sum_refund(processor, curr){
-    await this.http.get(`http://localhost:9000/processor/credorax/getsumrefund?processor=${processor}&curr=${curr}`).subscribe(result =>{
-      this.Subject_refund.next({res:result['result'][0], curr:result['currency']});
+  async get_sum_refund(processor, curr:any[]){
+    const dataArr = [];
+    for(let i = 0; i < curr.length;i++){
+      await this.http.get(`http://localhost:9000/processor/credorax/getsumrefund?processor=${processor}&curr=${curr[i]}`).subscribe(result =>{
+      //dataArr.push(result);
+      
+      if(result['result'][0][0]['total_sum'] !== null){
+        dataArr.push({res:result['result'][0][0]['total_sum'], curr:result['currency']});
+      }
     });
+    }
+
+    
+    this.Subject_refund.next(dataArr);
   }
 
   async refresh(){
@@ -69,11 +91,12 @@ export class CredoraxService implements OnInit{
 
   // sum reconciliation
   async get_sum_recon(db, curr){
-   
     await this.http.get(`http://localhost:9000/processor/credorax/getsumsystem?processor=${db}&curr=${curr}`).subscribe(result =>{
       this.Subject_sum_recon.next({res:result['result'][0], curr:result['currency']});
     });
   }
+
+
 
     //**************************************** index ********************************** */
   // get index statement
@@ -83,6 +106,25 @@ export class CredoraxService implements OnInit{
     });
     
   }
+
+  async recon(){
+    /*
+    await this.http.get(`http://localhsot:9000/processor/credorax/copyrecon`).subscribe(async result =>{
+      console.log(result); 
+    });*/
+    
+    
+    await this.http.get(`http://localhost:9000/processor/credorax/credorexsystemwithprocessorrecon`).subscribe(result =>{
+      console.log(result);
+    });
+    
+  }
+/*
+  async get_recon_data(table_name){
+    await this.http.get(`http://localhost:9000/processor/credorax/getreconcredorextbls?table=${table_name}`).subscribe(result =>{
+      console.log(result['result'][0]);
+    })
+  }*/
 
 
 

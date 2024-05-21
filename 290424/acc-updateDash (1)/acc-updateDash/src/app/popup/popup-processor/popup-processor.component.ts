@@ -36,7 +36,6 @@ export class PopupProcessorComponent implements OnInit{
       await this.serviceCredorex.get_index(this.statementDetails.processor,this.statementDetails.date,this.statementDetails.curr).then(async result =>{
         await setTimeout(() => {
           this.data = this.serviceCredorex.Subject_index_statement.value;
-          console.log( this.data['res']);
         }, 1100);
         
         

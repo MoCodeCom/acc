@@ -19,3 +19,8 @@
     -webkit-animation-fill-mode: forwards;
     animation-fill-mode: forwards;
 }
+
+.spinner{
+    width: 100%;
+    text-align: center;
+}

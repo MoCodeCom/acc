@@ -1,10 +1,243 @@
 
+.dp-hidden {
+    width: 0;
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+.custom-day {
+    text-align: center;
+    padding: 0.185rem 0.25rem;
+    display: inline-block;
+    height: 2rem;
+    width: 2rem;
+}
+.custom-day.focused {
+    background-color: #e6e6e6;
+}
+.custom-day.range,
+.custom-day:hover {
+    background-color: rgb(2, 117, 216);
+    color: white;
+}
+.custom-day.faded {
+    background-color: rgba(2, 117, 216, 0.5);
+}
 
-.example-tree{
-    background-color: white;
+.head{
+    height: 60px;
+    width: 90vw;
+    background-color: rgb(231, 231, 231);
+    margin: 10px 0px;
+    border-radius: 10px;
+    padding:0px;
+    display: flex;
+    align-content: center;
+
+}
+
+.head h5{
+    margin-left: 10px;
+    margin-top:10px;
+    font-size: 15px;
+}
+
+.popup{
     
+    /*margin-top: 64px;*/
 }
 
-.mat-tree-node{
-color: black;
+.col-12{
+    margin-top: 7px;
 }
+
+.foot{
+    height:fit-content;
+    width: 90vw;
+    background-color: rgb(231, 231, 231);
+    margin:10px 0px;
+    border-radius: 10px;
+    display: flex;
+    padding:5px;
+}
+
+p{
+    margin: 5px 5px;
+}
+
+.foot-section{
+    height: fit-content;
+    width: 35%;
+    border: 1px solid rgb(179, 179, 179);
+    z-index: 5;
+    border-radius: 10px;
+}
+/*------------------------------- upload btn -------------------*/
+.uploadBtn{
+    height: 100%;
+    border: white;
+}
+
+
+
+.inputs{
+    display: flex;
+    align-content: center;
+    padding-top: 10px;
+
+}
+
+.inputs .input-group{
+    align-items: center;
+    display: flex;
+    padding: 0px;
+    margin-left: 50px;
+
+}
+
+
+/*------------------------------- table -------------------------*/
+
+.table{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 100%;
+    gap: 20px;
+}
+
+.system-table{
+    text-align: center;
+    grid-column: 1;
+    border: 0.5 solid rgb(184, 184, 184);
+
+}
+
+.system-table table{
+    display: inline;
+}
+
+.processor-table{
+    text-align: center;
+    grid-column: 2;
+    border: 0.5 solid rgb(184, 184, 184);
+
+}
+
+.processor-table table{
+    display: inline;
+    border: 0.5 solid rgb(184, 184, 184);
+}
+
+/*----------------------- Alerts -----------------------*/
+.upload_successful{
+
+    margin-top: 3px;
+    margin-left: 100px;
+    animation: fadeOut 4s forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+.upload_danger{
+
+    margin-top: 3px;
+    margin-left: 100px;
+    animation: fadeOut 4s forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+.upload_loading{
+
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    margin-top: 3px;
+    margin-left: 100px;
+    animation: fadeOut 4s forwards;
+}
+
+.error_warning{
+    display: none;
+    margin-top: 3px;
+    margin-left: 100px;
+}
+
+.data_exist_warning{
+
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    margin-top: 3px;
+    margin-left: 100px;
+    animation: fadeOut 5s forwards;
+}
+
+.data_exist_warningSystem{
+
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    margin-top: 3px;
+    margin-left: 100px;
+    animation: fadeOut 5s forwards;
+}
+
+/*----------------------List statement--------------------*/
+.list_statement{
+    border-radius: 10px;
+    height: 360px;
+    overflow-x: auto;
+}
+
+.list_statement_item{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.list_statement_title{
+    display: flex;
+    gap: 150px;
+}
+
+.summary{
+    display: flex;
+}
+
+.summary ul{
+    text-decoration: none;
+    list-style: none;
+}
+
+.fees{
+    border-radius: 5px;
+    border: .5px solid rgb(206, 206, 206);
+    padding:5px;
+    margin: 5px;
+}
+
+
+
+.payments{
+    border-radius: 5px;
+    border: .5px solid rgb(206, 206, 206);
+    padding:5px;
+    margin: 5px;
+}
+
+.payments p{
+    color: rgb(8, 105, 8);
+    font-weight: bold;
+}
+
+
+
+
+
+
+
+@keyframes fadeOut {
+    0% { display: inherit; }
+    100% { display: none; }
+  }
+
+
+
+

@@ -1,11 +1,12 @@
-import { Component, OnInit, inject, Input, input, Output } from '@angular/core';
+import { Component, OnInit, inject, Input, input, Output, output } from '@angular/core';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { ProcessorsService } from '../processors.service';
 import { HttpClient } from '@angular/common/http';
 import { throwError} from 'rxjs';
 import { CredoraxService } from '../../services/processor/credorax.service';
 import { ApiService } from '../../services/api.service';
-import { ShareService } from '../../services/processor/share.service';
+
+
 
 
 @Component({
@@ -14,6 +15,7 @@ import { ShareService } from '../../services/processor/share.service';
   styleUrl: './credorax.component.css'
 })
 export class CredoraxComponent implements OnInit{
+	
 	calendar = inject(NgbCalendar);
 	formatter = inject(NgbDateParserFormatter);
 	/*----------------- statement list ------------------*/
@@ -45,8 +47,10 @@ export class CredoraxComponent implements OnInit{
 
 	public countProcessorData = this.processorsService.countProcessorBehaveior;
     public countSystemData = this.processorsService.countSystemBehaveior;
-
+	public dataProcessor:any;
 	// Table
+	//-------------- Spinners ---------------------------//
+    spinner_recon = false;
 
 	/*------------------------- register -----------------------------------*/
 	sum_payment:any[] = [];
@@ -60,12 +64,14 @@ export class CredoraxComponent implements OnInit{
 	/*----------------------------------------------------------------------*/
 
 
+
+
 	constructor(
 		private processorsService:ProcessorsService,
 		private http:HttpClient,
 		private serviceCredorax:CredoraxService,
 		private apiService:ApiService,
-		private shareService:ShareService,
+		
   ){}
 	ngOnInit(): void {
     this.count();
@@ -75,6 +81,7 @@ export class CredoraxComponent implements OnInit{
 	this.onRefresh();
 	this.onGetRefund();
 	this.onGetSumRecon();
+	
   }
 
 	onDateSelection(date: NgbDate) {
@@ -188,17 +195,43 @@ export class CredoraxComponent implements OnInit{
 		}
 	}
 
+	async onReconCredorex_2(){
+		await this.serviceCredorax.recon()
+		.then(result => {})
+		.catch(error=>{});
+	}
+
 	async onReconCredorex(){
+		this.spinner_recon = true;
 		await this.getMatchAuto();
-		setTimeout(async()=>{
-			await this.http.get('http://localhost:9000/processor/credorax/reconcredorex').subscribe(result =>{
-				console.log(result);
+		await setTimeout(async()=>{
+			this.http.get('http://localhost:9000/processor/credorax/reconcredorex').subscribe(result =>{
 			this.reconciliationMessage = result;
 		})
-		setTimeout(() => {
+
+		await setTimeout(() => {
 			this.reconciliationMessage = null;
             window.location.reload();
-		}, 2000);
+			this.spinner_recon = false;
+		}, 1000);
+		
+		}, 10);
+	}
+
+	async onRecon(){
+		this.spinner_recon = true;
+		await this.getMatchAuto();
+		await setTimeout(async()=>{
+			this.http.get('http://localhost:9000/processor/credorax/reconcredorex').subscribe(result =>{
+			this.reconciliationMessage = result;
+		})
+
+		await setTimeout(() => {
+			this.reconciliationMessage = null;
+            window.location.reload();
+			this.spinner_recon = false;
+		}, 1000);
+		
 		}, 10);
 	}
 
@@ -209,9 +242,11 @@ export class CredoraxComponent implements OnInit{
 	}
 
   async count(){
-
-      this.countProcessorData = await this.processorsService.countProcessorBehaveior;
-      this.countSystemData = await this.processorsService.countSystemBehaveior;
+	await setTimeout(() => {
+	  this.countProcessorData = this.processorsService.countProcessorBehaveior;
+      this.countSystemData = this.processorsService.countSystemBehaveior;
+	}, 500);
+      
   }
 
 
@@ -220,10 +255,15 @@ export class CredoraxComponent implements OnInit{
 	//this.reconciliationMessage = 'Is done!';//this.serviceCredorax.Subjec_message;
   }
 
+  /********************************************************/
+  
+
   async onClearReconCredorex(){
 	await this.apiService.deleteAllData('recon_credorex');
 	window.location.reload();
   }
+
+  
 
   async onGetPayments(){
 	await this.serviceCredorax.get_Payments('credorax')
@@ -251,21 +291,6 @@ export class CredoraxComponent implements OnInit{
 					}
 				}
 			}, 2000);
-
-			
-			/*
-			setTimeout(() => {
-				dataArr = this.serviceCredorax.Subject_sum_payment.value;
-			}, 2000);*/
-			
-			/*
-			setTimeout(() => {
-				const isCurrencyExistthis = this.serviceCredorax.Subject_sum_payment.value;
-				console.log(isCurrencyExistthis);
-				//console.log(isCurrencyExistthis['curr']);
-				this.sum_payment.push(isCurrencyExistthis);
-					//console.log(this.sum_payment)
-			}, 2000);*/
 		})
 		.catch(error =>{
 			console.log(error);
@@ -277,27 +302,18 @@ export class CredoraxComponent implements OnInit{
 	const feesType = ['fixed_transaction_fee','discount_rate','interchange','card_scheme_fees','acquiring_fee'];
 	this.sum_fee = [];
 	this.sum_fee_total = [];
-
-	for(let i =0;i<feesType.length;i++){
-		for(let n=0;n<this.currencies.length;n++){
-			await this.serviceCredorax.get_sum_fee('credorex',this.currencies[n],feesType[i])
-			.then(()=>{
-				const isCurrencyExistthis = this.serviceCredorax.Subject_sum_fee.value;
-				if(isCurrencyExistthis['res']['total_sum'] !== null && isCurrencyExistthis['res']['total_sum'] !== 0 ){
-					this.sum_fee.push(this.serviceCredorax.Subject_sum_fee.value);
-				}
-				
-			})
-			.catch(error => console.log(error));
-		}
+	this.serviceCredorax.get_sum_fee('credorex',this.currencies,feesType)
+	.then(async(result)=>{
+		let isCurrencyExistthis:any = null;
 		
-	}
-
-	this.sum_fee_total = this.onGetFeesTotal(this.sum_fee);
-
-
+		await setTimeout(() => {
+			isCurrencyExistthis = this.serviceCredorax.Subject_sum_fee.value;
+			this.sum_fee = this.serviceCredorax.Subject_sum_fee.value;
+			this.sum_fee_total = this.onGetFeesTotal(this.sum_fee);
+		}, 1000);
+	})
+	.catch(error => console.log(error));
   }
-
 
   onGetFeesTotal(arr:any[]){
 	const totalFees:any[] = [];
@@ -308,7 +324,6 @@ export class CredoraxComponent implements OnInit{
 
 		if(!totalFees.some(item => item.currency === element['curr'])){
 			totalFees.push({currency, amount});
-
 		}else{
 			const fee = totalFees.filter(item => item.currency === currency);
 			fee[0]['amount'] += amount;
@@ -320,21 +335,22 @@ export class CredoraxComponent implements OnInit{
 
   async onGetRefund(){
 	this.sum_refund = [];
-	for(let i = 0;i<this.currencies.length;i++){
-		//const c = this.currencies[i];
-		await this.serviceCredorax.get_sum_refund('credorex',this.currencies[i])
-		.then((result)=>{
-			const isExist= this.serviceCredorax.Subject_refund.value;
-			if(isExist['res'][0]['total_sum'] !== null){
-				this.sum_refund.push(isExist)
+	await this.serviceCredorax.get_sum_refund('credorex',this.currencies)
+	.then(async result =>{
+		await setTimeout(() => {
+			if(this.serviceCredorax.Subject_refund.value === null || this.serviceCredorax.Subject_refund.value === undefined){
+				this.sum_refund = null;
+			}else{
+				this.sum_refund = this.serviceCredorax.Subject_refund.value;
 			}
-		})
-		.catch(error =>{
-			console.log(error);
-		});
-	}
-  }
+			
+		}, 500);
+	})
+	.catch(error => {
+		console.log(error);
+	})
 
+  }
 
   onRefresh(){
 	this.refresh = this.serviceCredorax.Subject_refresh.value;
@@ -351,11 +367,13 @@ export class CredoraxComponent implements OnInit{
 		
 		await this.serviceCredorax.get_sum_recon('recon_credorex',this.currencies[i])
 		.then(result =>{
-			const isExist = this.serviceCredorax.Subject_sum_recon.value;
-			
-			if(isExist['res'][0]['total_sum'] !== null){
+			setTimeout(() => {
+				const isExist = this.serviceCredorax.Subject_sum_recon.value;
+			    if(isExist['res'][0]['total_sum'] !== null && isExist['curr'] === this.currencies[i]){
 				this.sum_recon.push(isExist)
 			}
+			}, 500);
+			
 		})
 		.catch(error =>{
 			console.log(error);
@@ -372,6 +390,8 @@ export class CredoraxComponent implements OnInit{
   onCloseShow(){
 	this.showstatement = false;
   }
+
+  
 
 
 }

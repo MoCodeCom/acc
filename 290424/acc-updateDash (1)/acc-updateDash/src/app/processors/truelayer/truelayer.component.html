@@ -1,1 +1,210 @@
-<p>truelayer works!</p>
+
+<div class="popup" 
+     
+     *ngIf="showstatement">
+	 
+	<app-popup-processor 
+	   (close)="onCloseShow()"
+	   [showstatementlist]="showstatementlist_parent"
+	></app-popup-processor>
+</div>
+<!--head-->
+<div class="head">
+	<h5>Reconciliation</h5>
+	<!--Input file-->
+	<div  class="inputs">
+		<div class="input-group mb-3">
+			<p>System file: </p>
+			<!--<label class="input-group-text" for="inputGroupFile01">Upload</label>-->
+        <button (click)="onUploadCpCredorex()" class="uploadBtn">Upload</button>
+		<input type="file"
+		       class="form-control"
+			   id="inputGroupFile01"
+			   (change)="onChangeCpCredorex($event)"
+			   #fileUploadcp>
+		</div>
+
+
+
+		<div class="input-group mb-3">
+			<p>Credorex file: </p>
+			<!--<label class="input-group-text" for="inputGroupFile02">Upload</label>-->
+        <button (click)="onUploadCredorex()" class="uploadBtn">Upload</button>
+		<input type="file"
+		       class="form-control"
+			   id="inputGroupFile02"
+			   (change)="onChangeCredorex($event)"
+			   #fileUploadCredorex>
+		</div>
+	</div>
+
+	<!--Alerts-->
+	<div >
+		<!--Input message upload successful-->
+		<div *ngIf="status =='success'" class="upload_successful">
+			<div class="alert alert-success" role="alert">
+				Uploaded file success.
+			  </div>
+		</div>
+
+		<!--Input error faild upload-->
+		<div *ngIf="status =='fail'" class="upload_danger">
+			<div class="alert alert-danger" role="alert">
+				Uploaded file Failed.
+			  </div>
+		</div>
+        <!--Input error message code null-->
+		<div *ngIf="uploadCredorxMessage != '' && uploadSystemMessage.message_code === null" class="data_exist_warning">
+			<div class="alert alert-warning" role="alert">
+				{{uploadCredorxMessage.message}}{{uploadSystemMessage.message}}
+			  </div>
+		</div>
+
+		<!--Input error message code 1-->
+		<div *ngIf=" uploadSystemMessage.message_code === 1 || uploadCredorxMessage.message_code === 1 " class="data_exist_warningSystem">
+			<div class="alert alert-warning" role="alert">
+				{{uploadSystemMessage.message}}{{uploadCredorxMessage.message}}
+			  </div>
+		</div>
+
+		<!--Input error message code 2-->
+		<div *ngIf="uploadSystemMessage.message_code === 2 || uploadCredorxMessage.message_code === 2 " class="data_exist_warningSystem">
+			<div class="alert alert-danger" role="alert">
+				{{uploadSystemMessage.message}}{{uploadCredorxMessage.message}}
+			  </div>
+		</div>
+
+		<!--Input error GENERAL ERROR-->
+		<div *ngIf="status =='uploading'" class="upload_danger">
+			<div class="alert alert-primary" role="alert">
+				There is error.
+			  </div>
+		</div>
+
+		<!--Input error GENERAL ERROR-->
+		<div *ngIf="reconciliationMessage != null" class="upload_danger">
+			<div class="alert alert-primary" role="alert">
+				{{reconciliationMessage.message}}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--body-->
+<div class="body">
+<!-- Selection Date -->
+<form class="row row-cols-sm-auto">
+
+	<!--Reconciliation button-->
+	<div class="col-12">
+		<button type="button" class="btn btn-success" (click)="onReconCredorex()" *ngIf="countSystemData.value < 2">Reconcilition</button>
+	</div>
+
+	<div class="col-12">
+		<button type="button" class="btn btn-danger" (click)="onClearReconCredorex()">Clear</button>
+	</div>
+
+
+</form>
+
+<hr />
+
+
+<!------------------------------->
+
+
+<div class="table">
+	<app-processor></app-processor>
+	<app-system></app-system>
+</div>
+<!-- End body -->
+
+
+
+<!--foot-->
+
+<div class="foot">
+	<!-- Section 1-->
+	<div class="foot-section">
+		<div class="payments">
+			<p>Transaction count in processor : {{countSystemData.value - 1}}</p>
+			<p>Transaction count in system : {{countProcessorData.value}}</p>
+		</div>
+		
+
+		<div class="payments" >
+			<p>Total debit accounts:</p>
+            <ul *ngFor="let i of sum_recon">
+				<li>{{i['curr']}}:&nbsp;&nbsp; {{i['res'][0]['total_sum'] | number}} </li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- Section 2 -->
+	<div class="foot-section">
+		<div>
+			<p class="list-group-item active" style="font-weight: bold; color: green;">Statements List</p>
+			<div class="list_statement_title"><p>Statement Date</p> <p>Payment</p> </div>
+			<div class="list_statement">
+				
+                <ul class="list-group" *ngFor="let i of statement_list">
+						<li class="list-group-item" aria-disabled="true">
+							<div class="list_statement_item">
+								<p>{{i['statement_date']}}</p>
+								<p>{{i['net_activity']}}</p>
+								<p>{{i['cs_settlement_currency']}}</p>
+								<button type="button" 
+								        class="btn btn-light"
+										(click)="onShowStatement(i['statement_date'], i['cs_settlement_currency'])">Show</button>
+							</div>
+						</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<!-- Section 3 -->
+	<div class="foot-section">
+		<div class="summary">
+			<div >
+				<div class="payments" *ngIf="sum_payment.length > 0">
+					<p>Total Payment:</p>
+					
+                    <ul *ngFor="let i of sum_payment">
+						<li>{{i['curr']}} = {{i['res'] | number}}</li>
+					</ul>
+			    </div>
+
+				
+				<div class="payments" *ngIf="sum_refund.length > 0 || sum_refund !== undefined || sum_refund !== null">
+					<p>Total Refund:</p>
+					
+                    <ul  *ngFor="let i of sum_refund">
+						<li>{{i['curr']}} = {{i['res'] | number}}</li>
+					</ul>
+
+				</div>
+			</div>
+			<div class="fees">
+				<div *ngIf="sum_fee.length > 0 || sum_fee_total !== undefined">
+					<p style="font-weight: bold; color: green;">Total Fees</p>
+					
+                    <ul *ngFor="let i of sum_fee" >
+						<li>
+							<p style="color: rgb(197, 5, 5);">{{i['fee'] }}:  {{i['res']['total_sum']|number}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{i['curr']}}</p>
+						</li>
+					</ul>
+				</div>
+				<hr>
+				<div *ngIf="sum_fee_total.length > 0 || sum_fee_total !== undefined">
+					
+                    <ul *ngFor="let i of sum_fee_total">
+						<li>
+							<p style="color: rgb(197, 5, 5);">Total:&nbsp;&nbsp; {{i['amount']|number }}:&nbsp;&nbsp;  {{i['currency']}}</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

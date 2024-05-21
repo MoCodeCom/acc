@@ -1,6 +1,6 @@
 .popup{
     position: fixed;
-    top: 250;
+    top: 0;
     width: 100%;
     text-align: center;
     z-index: 1000;
@@ -21,7 +21,7 @@
 }
 
 .body{
-    height:fit-content;
+    height:400px;
     width: 70%;
     align-items: center;
     justify-items: center;

@@ -1,6 +1,6 @@
 <!-- calender / refresh section -->
   <div class="table_title">
-    <p>System</p>
+    <p>Processor</p>
     <!-- calender -->
     <form class="row row-cols-sm-auto">
 			<div class="col-12">
@@ -20,7 +20,7 @@
 		</form>
     <button class="btn btn-success" (click)="getDataByDate(model2)">Submit</button>
     <!-- refresh -->
-    <button class="btn btn-default" (click)="getReconData_2()"><img width="25px" alt="reload" src="../../../../assets/images/reload.png"></button>
+    <button class="btn btn-default" (click)="getReconData()"><img width="25px" alt="reload" src="../../../../assets/images/reload.png"></button>
     
   </div>
 <!-- End calender / refresh section -->
@@ -40,26 +40,45 @@
 <!-- End search section -->
 
 <!-- Table recon processor section -->
+
+<!-- Table recon system data section-->
+  <!-- spiner -->
+  <div class="spinner" *ngIf="spinner_system">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  
+  <!------------>
   <table class="table table-striped">
     <thead>
       <tr>
         <th scope="col">ID</th>
         <th scope="col">Posting date</th>
-        <th scope="col">Status Paid</th>
+        <th scope="col">Paid</th>
         <th scope="col">Currency</th>
+        <th scope="col">Status</th>
       </tr>
     </thead>
     <tbody >
-
         <tr *ngFor="let i of POSTS2 | paginate:{
           itemsPerPage:tableSizeProcessor,
           currentPage:pageProcessor,
-          totalItems:countProcessor}; let post = index">
+          totalItems:countProcessor}; let post = index" >
+          <th scope="row">{{ i['merchant_reference_number_h9'] }}</th>
+          <td >{{ i['posting_date'] }}</td>
+          <td >{{ i['transaction_amount']}}</td>
+          <td >{{ i['cs_settlement_currency']}}</td>
+          <td >{{ i['transaction_type']}}</td>
+          <td><button class="btn btn-secondary" (click)="onMatch_credorex(i['merchant_reference_number_h9'] )">Match</button></td>
+          <!--
           <th scope="row" *ngIf="i['ID_processor']">{{ i['ID_processor'] }}</th>
           <td *ngIf="i['ID_processor']">{{ i['posting_date_processor'] }}</td>
           <td *ngIf="i['ID_processor']">{{ i['amount_processor']}}</td>
           <td *ngIf="i['ID_processor']">{{ i['currency_processor']}}</td>
-          <td *ngIf="i['ID_processor']"><button class="btn btn-secondary" (click)="onMatch_credorex(i['ID_processor'] )">Match</button></td>
+          <td *ngIf="i['ID_processor'] && i['status'] === '24'">Refund</td>
+          <td *ngIf="i['ID_processor'] && i['status'] !== '24'">{{i['status']}}</td>
+          <td *ngIf="i['ID_processor']"><button class="btn btn-secondary" (click)="onMatch_credorex(i['ID_processor'] )">Match</button></td>-->
         </tr>
     </tbody>
   </table>

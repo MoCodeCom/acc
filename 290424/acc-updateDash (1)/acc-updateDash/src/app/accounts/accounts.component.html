@@ -1,0 +1,23 @@
+
+<div class="header">
+	<h4>Processors</h4>
+</div>
+<ul ngbNav #nav="ngbNav" [(activeId)]="active" [destroyOnHide]="false" class="nav-tabs">
+	<li [ngbNavItem]="1" [destroyOnHide]="true">
+		<button ngbNavLink>Statements</button>
+		<ng-template ngbNavContent>
+			<app-statements></app-statements>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="2">
+		<button ngbNavLink>Codes</button>
+		<ng-template ngbNavContent>
+			<app-code></app-code>
+		</ng-template>
+	</li>
+	
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+<pre>Active: {{ active }}</pre>

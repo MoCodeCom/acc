@@ -1,6 +1,6 @@
 <!-- calender / refresh section-->
   <div class="table_title">
-    <p>Processor</p>
+    <p>System</p>
     <!-- calender -->
     <form class="row row-cols-sm-auto">
 			<div class="col-12">
@@ -20,7 +20,7 @@
 		</form>
     <button class="btn btn-success" (click)="getDataByDate(model2)">Submit</button>
     <!-- Refresh -->
-    <button class="btn btn-default" (click)="getReconData_2()"><img width="25px" alt="reload" src="../../../../assets/images/reload.png"></button>
+    <button class="btn btn-default" (click)="getReconData()"><img width="25px" alt="reload" src="../assets/images/reload.png"></button>
   </div>
 <!-- End calender / refresh section-->
 
@@ -38,14 +38,22 @@
 <!-- End search section -->
 
 <!-- Table recon system data section-->
+  <!-- spiner -->
+  <div class="spinner" *ngIf="spinner_system">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+<!------------>
   
   <table class="table table-striped">
     <thead>
       <tr>
         <th scope="col">ID</th>
         <th scope="col">Posting Date</th>
-        <th scope="col">Status Paid</th>
+        <th scope="col">Paid</th>
         <th scope="col">Currency</th>
+        <th scope="col">Status</th>
       </tr>
     </thead>
     <tbody>
@@ -53,11 +61,13 @@
           itemsPerPage:tableSizeSystem,
           currentPage:pageSystem,
           totalItems:countSystem}; let post_1 = index">
-          <th scope="row" *ngIf="i['ID_system']">{{ i['ID_system'] }}</th>
-          <td *ngIf="i['ID_system']">{{ i['posting_date_system'] }}</td>
-          <td *ngIf="i['ID_system']">{{ i['amount_system']}}</td>
-          <td *ngIf="i['ID_system']">{{i['currency_system']}}</td>
-          <td *ngIf="i['ID_system']"><button class="btn btn-secondary" (click)="onMatch_system(i['ID_system'] )">Match</button></td>
+          <th scope="row" >{{ i['ID_trans'] }}</th>
+          <td >{{ i['rDate'] }}</td>
+          <td >{{ i['Paid']}}</td>
+          <td >{{i['pCrn']}}</td>
+          <td *ngIf="i['Status'] !== '24'">{{i['Status']}}</td>
+          <td *ngIf="i['Status'] === '24'">Refund</td>
+          <td ><button class="btn btn-secondary" (click)="onMatch_system(i['ID_trans'] )">Match</button></td>
         </tr>
     </tbody>
 
@@ -79,7 +89,13 @@
   <!-- End pagenation system table section-->
 
   <!-- Upload data to databse -->
-  <div *ngIf="countSystemData < 2">
+  <div class="spinner" *ngIf="spinner_register">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="countData < 1 && spinner_system === false">
     <button class="btn btn-success" 
     style="width: 100%;" 
     (click)="onRegister()"

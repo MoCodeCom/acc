@@ -7,14 +7,17 @@ import { DashboardComponent } from './home/dashboard/dashboard.component';
 import { BanksComponent } from './banks/banks.component';
 import { PayoutComponent } from './payout/payout.component';
 import { SettingsComponent } from './settings/settings.component';
+import { AccountsComponent } from './accounts/accounts.component';
 
 const routes: Routes = [
   {path:'', component:DashboardComponent},
+  {path:'home',component:DashboardComponent},
   {path:'login', component:LoginComponent},
   {path:'processors', component:ProcessorsComponent},
   {path:'banks', component:BanksComponent},
   {path:'payout', component:PayoutComponent},
   {path:'settings', component:SettingsComponent},
+  {path:'accounts',component:AccountsComponent},
   {path:'**', redirectTo:'', pathMatch:'full'}
 ];
 

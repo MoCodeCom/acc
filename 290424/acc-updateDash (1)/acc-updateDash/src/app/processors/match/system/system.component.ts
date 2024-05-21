@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProcessorsService } from '../../processors.service';
 import { MatchService } from '../../../services/processor/match.service';
 import { ShareService } from '../../../services/processor/share.service';
+import { ApiService } from '../../../services/api.service';
 
 @Component({
   selector: 'app-system',
@@ -14,11 +15,14 @@ export class SystemComponent implements OnInit{
     private http:HttpClient,
     private serviceProcessor:ProcessorsService,
     private serviceMatch:MatchService,
-    private serviceShare:ShareService
+    private serviceShare:ShareService,
+    private serviceApi:ApiService
   ){}
   ngOnInit(): void {
     this.getReconData();
+    //this.getReconData2();
     this.messge_register = null;
+    this.getCountProcess();
   }
 
   /*----------------------- reconciliation-----------------------------*/
@@ -26,12 +30,18 @@ export class SystemComponent implements OnInit{
 	reconData:any = [];
 	reconSystemTblData:any[] = [];
 	countSystemData = 0;
+
 //--------------------- Pagenation for System table --------------------//
 POSTS:any[]=[];
 pageSystem:number = 1;
 countSystem:number=0;
+countData = null; //for count system rows
+
 tableSizeSystem:number=10;
 
+//-------------- Spinners ---------------------------//
+spinner_system = false;
+spinner_register = false;
 //-------------- Searching --------------------------//
 search_value:string = null;
 
@@ -49,60 +59,66 @@ onTableDataChangeSystem(event:any):void{
 }
 
 
-
-  async onMatch_system(id){
-    await this.http.delete(`http://localhost:9000/processor/credorax/deleterowreconcredorex/${id}`).subscribe(result =>{
-    });
-    setTimeout(() => {
+// matching
+async onMatch_system(id){ //----------------> work
+  this.spinner_system = true;
+  setTimeout(async() => {
+    await this.serviceMatch.get_match(id,'system_recon').then(result =>{
       window.location.reload();
-    }, 900);
+      this.spinner_system = false;
+    })
+    .catch(error =>{
+      console.log(error);
+    });
+  }, 500);
 
-  }
+}
 
   //To get data from reconcilation database about system table
-  async getReconData(){
-		this.reconSystemTblData = [];
-		this.reconData = [];
-		await this.http.get('http://localhost:9000/processor/credorax/getreconcredorex').subscribe(result =>{
-				this.reconData = result['data'][0];
-				for(let i = 0;i<this.reconData.length; i++){
-					if(this.reconData[i]["ID_system"] != null){
-						this.reconSystemTblData.push(this.reconData[i]);
-						this.countSystemData++;
-					}
-				}
-			});
-			this.POSTS = this.reconSystemTblData;
-      this.serviceProcessor.countSystem(this.countSystemData);
-	}
 
-  //To Search on the recon table on system column
-  async search(search_value){
-    if(search_value === null || search_value === ''){
-      this.getReconData_2();
-    }else{
-      await this.serviceMatch.search_recon_system(search_value);
-      this.POSTS = this.serviceMatch.subject_search_system.value['result'][0];
+  //=============================> plan 2
+async getReconData(){ //--------------------> work
+  this.POSTS = [];
+  this.spinner_system = true;
+  await this.serviceMatch.get_recon('system_recon')
+  .then(result =>{
+    
+    setTimeout(() => {
+      const data:any[] = this.serviceMatch.subject_get_recon_system.value;
+      for(let i=0;i<data.length;i++){
+        this.POSTS.push(data[i]);
+      /*if(data[i]['status'].trim().toLowerCase() !== 'payment'){
+        
+      }*/
     }
     
+      this.spinner_system = false;
+    }, 1000);
+    
+    
+  })
+  .catch(error =>{
+    console.log(error);
+  });
+}
+
+
+  //To Search on the recon table on system column
+  // To search in the processor recon column data.
+  async search(search_value){ //-----------------> work
+    if(search_value === null || search_value === ''){
+      this.getReconData();
+    }else{
+      setTimeout(async() => {
+        await this.serviceMatch.search_recon_processor(search_value, 'system_recon');
+        this.POSTS = this.serviceMatch.subject_search_system.value['result'][0];
+      }, 1000);
+      
+    }
   }
 
   //To refresh data
-  async getReconData_2(){
-    this.reconSystemTblData = [];
-		this.reconData = [];
-		await this.http.get('http://localhost:9000/processor/credorax/getreconcredorex').subscribe(result =>{
-				this.reconData = result['data'][0];
-				for(let i = 0;i<this.reconData.length; i++){
-					if(this.reconData[i]["ID_system"] != null){
-						this.reconSystemTblData.push(this.reconData[i]);
-						//this.countSystemData++;
-					}
-				}
-			});
-			this.POSTS = this.reconSystemTblData;
-      this.serviceProcessor.countSystem(this.countSystemData);
-  }
+  
 
   //To get data according to selected date.
   async getDataByDate(model2){
@@ -111,17 +127,41 @@ onTableDataChangeSystem(event:any):void{
 
     await this.serviceMatch.getReconDataOnDate(d,'system')
     .then(()=>{
-      this.POSTS = this.serviceMatch.subject_message.value[0];
+      setTimeout(() => {
+        this.POSTS = this.serviceMatch.subject_message.value[0];
+      }, 1000);
+
     });
   }
 
   async onRegister(){
-    await this.serviceShare.register('credorax');
-    this.messge_register = await this.serviceShare.Subject_message.value['message'];
+    this.spinner_register = true;
+    await setTimeout(() => {
+      this.serviceShare.register('credorax');
+      this.messge_register = this.serviceShare.Subject_message.value['message'];
+    }, 500);
+    
     setTimeout(() => {
       this.messge_register = null;
+      this.serviceApi.deleteAllData('credorextbl');
+      window.location.reload();
+      this.spinner_register = false;
+    }, 1500);
+  }
 
-    }, 2000);
+
+  getCountProcess(){
+    setTimeout(() => {
+      this.serviceShare.count_table('credorex','recon_credorex')
+      .then(result => {
+        
+        this.countData = this.serviceShare.Subject_count.value['res']-1;
+        //console.log(this.countData)
+      })
+      .catch(error =>{
+        console.log(error);
+      });
+    }, 500);
   }
 
 }

@@ -19,6 +19,7 @@ import { PayoutModule } from './payout/payout.module';
 import { SettingsModule } from './settings/settings.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { AccountsModule } from './accounts/accounts.module';
 //import { ProcessorStatementPipe } from './pipes/statement/processor-statement.pipe';
 
 
@@ -29,6 +30,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
   declarations: [
     AppComponent,
     LoginComponent,
+
     //ProcessorStatementPipe,
   
     //SearchFilterPipe,
@@ -50,7 +52,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     ChartsModule,
     ReportsModule,
     SettingsModule,
- 
+    AccountsModule
   ],
   providers: [
     provideClientHydration(),

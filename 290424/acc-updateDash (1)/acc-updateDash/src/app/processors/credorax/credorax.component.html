@@ -2,6 +2,7 @@
 <div class="popup" 
      
      *ngIf="showstatement">
+	 
 	<app-popup-processor 
 	   (close)="onCloseShow()"
 	   [showstatementlist]="showstatementlist_parent"
@@ -95,9 +96,20 @@
 <form class="row row-cols-sm-auto">
 
 	<!--Reconciliation button-->
+	<div class="spinner" *ngIf="spinner_recon">
+		<div class="spinner-border text-primary" role="status">
+		  <span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
 	<div class="col-12">
+
 		<button type="button" class="btn btn-success" (click)="onReconCredorex()">Reconcilition</button>
 	</div>
+
+	<div class="col-12">
+		<button type="button" class="btn btn-warning" (click)="onReconCredorex_2()" >Reconcilition</button>
+	</div>
+	
 
 	<div class="col-12">
 		<button type="button" class="btn btn-danger" (click)="onClearReconCredorex()">Clear</button>
@@ -133,7 +145,8 @@
 
 		<div class="payments" >
 			<p>Total debit accounts:</p>
-			<ul *ngFor="let i of sum_recon">
+			
+            <ul *ngFor="let i of sum_recon">
 				<li>{{i['curr']}}:&nbsp;&nbsp; {{i['res'][0]['total_sum'] | number}} </li>
 			</ul>
 		</div>
@@ -145,7 +158,8 @@
 			<p class="list-group-item active" style="font-weight: bold; color: green;">Statements List</p>
 			<div class="list_statement_title"><p>Statement Date</p> <p>Payment</p> </div>
 			<div class="list_statement">
-				<ul class="list-group" *ngFor="let i of statement_list">
+				
+                <ul class="list-group" *ngFor="let i of statement_list">
 						<li class="list-group-item" aria-disabled="true">
 							<div class="list_statement_item">
 								<p>{{i['statement_date']}}</p>
@@ -158,7 +172,6 @@
 						</li>
 				</ul>
 			</div>
-			
 		</div>
 	</div>
 
@@ -166,36 +179,38 @@
 	<div class="foot-section">
 		<div class="summary">
 			<div >
-				<div class="payments" *ngIf="sum_payment.length > 0">
+				<div class="payments" *ngIf="sum_payment.length > 0 || sum_payment !== undefined || sum_payment !== null">
 					<p>Total Payment:</p>
-					<ul *ngFor="let i of sum_payment">
+					
+                    <ul *ngFor="let i of sum_payment">
 						<li>{{i['curr']}} = {{i['res'] | number}}</li>
 					</ul>
 			    </div>
 
-				<div class="payments" *ngIf="sum_refund.length > 0 || sum_refund !== undefined">
+				
+				<div class="payments" *ngIf="sum_refund.length > 0 || sum_refund !== undefined || sum_refund !== null">
 					<p>Total Refund:</p>
-					<ul  *ngFor="let i of sum_refund">
-						<li>{{i['curr']}} = {{i['res'][0]['total_sum'] | number}}</li>
+					
+                    <ul  *ngFor="let i of sum_refund">
+						<li>{{i['curr']}} = {{i['res'] | number}}</li>
 					</ul>
+				
 				</div>
-
 			</div>
-	
 			<div class="fees">
-				<div *ngIf="sum_fee.length > 0 || sum_fee_total !== undefined">
+				<div *ngIf="sum_fee.length > 0 || sum_fee_total !== undefined || sum_fee !== null">
 					<p style="font-weight: bold; color: green;">Total Fees</p>
-					<ul *ngFor="let i of sum_fee" >
+                    <ul *ngFor="let i of sum_fee" >
+						
 						<li>
 							<p style="color: rgb(197, 5, 5);">{{i['fee'] }}:  {{i['res']['total_sum']|number}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{i['curr']}}</p>
 						</li>
 					</ul>
 				</div>
-				
 				<hr>
-
-				<div *ngIf="sum_fee_total.length > 0 || sum_fee_total !== undefined">
-					<ul *ngFor="let i of sum_fee_total">
+				<div *ngIf="sum_fee_total.length > 0 || sum_fee_total !== undefined || sum_fee_total != null">
+					
+                    <ul *ngFor="let i of sum_fee_total">
 						<li>
 							<p style="color: rgb(197, 5, 5);">Total:&nbsp;&nbsp; {{i['amount']|number }}:&nbsp;&nbsp;  {{i['currency']}}</p>
 						</li>
